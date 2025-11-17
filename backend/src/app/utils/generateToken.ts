@@ -18,7 +18,7 @@ import { Types } from "mongoose";
  *   - `secure: true` in production (only sent over HTTPS), `false` in development.
  *
  * @example
- * import { generateToken } from './auth.utils';
+ * import { generateToken } from './utils/generateToken';
  *
  * app.post('/login', (req, res) => {
  *   const userId = '12345';
