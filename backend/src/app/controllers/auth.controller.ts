@@ -14,15 +14,11 @@ export const signup = async (req: Request, res: Response) => {
         .json({ error: "User with this email already exists" });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     // Create new User in the database
     const newUser = await User.create({
       fullName,
       email,
-      password: hashedPassword,
+      password,
     });
     if (!newUser) return res.status(400).json({ error: "Invalid user data" });
 
