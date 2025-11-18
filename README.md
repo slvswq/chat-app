@@ -83,5 +83,7 @@ pnpm dev
 
 ### Frontend:
 -   `pnpm dev` – run frontend in development mode
--   `npm run build` – build production React app
+-   `pnpm build` – build production React app
+-   `pnpm lint` - run eslint.
+-   `pnpm preview` - start web server that serves the built solution 
 
