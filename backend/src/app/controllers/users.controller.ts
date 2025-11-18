@@ -5,7 +5,7 @@ export const getMe = (req: Request, res: Response) => {
   try {
     res.status(200).json(req.user);
   } catch (error) {
-    console.log("Error in checkAuth controller: ", error);
+    console.log("Error in getMe controller: ", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
