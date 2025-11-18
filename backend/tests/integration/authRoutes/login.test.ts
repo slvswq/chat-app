@@ -16,7 +16,7 @@ describe("login route", () => {
     await User.deleteMany({});
   });
 
-  it("should create a new user", async () => {
+  it("should return user data", async () => {
     const res = await request(app).post("/api/auth/login").send({
       email: "john@example.com",
       password: "password123",
