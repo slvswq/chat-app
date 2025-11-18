@@ -1,11 +1,24 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { Routes, Route } from "react-router-dom";
+
+import NavBar from "./components/NavBar";
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const App: React.FC = () => {
   return (
     <div>
-      <h1>Hello world!</h1>
-      <Button>Hello!</Button>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
     </div>
   );
 };
