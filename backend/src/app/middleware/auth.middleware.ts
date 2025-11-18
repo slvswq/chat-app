@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model";
 import type { Request, Response, NextFunction } from "express";
-import type { JwtPayload } from "../../types/jwt";
+import type { JwtPayload } from "../types/jwt";
 
 /**
  * Protects private routes by verifying the JWT stored in the `jwt` cookie.
