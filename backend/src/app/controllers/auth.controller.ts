@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken";
+import cloudinary from "../lib/cloudinary";
 
 export const signup = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -80,6 +81,32 @@ export const logout = (req: Request, res: Response) => {
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("Error in logout controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const { fullName, profilePic } = req.body;
+  try {
+    const userId = req.user._id;
+
+    // Upload new profilePic to cloudibary
+    const uploadReponse = await cloudinary.uploader.upload(profilePic);
+
+    // Update the user entry in the DB
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        fullName,
+        profilePic: uploadReponse.secure_url,
+      },
+      { new: true }
+    );
+
+    // Send message with 200 (OK) status code and updatedUser data
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in updateProfile controller: ", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
