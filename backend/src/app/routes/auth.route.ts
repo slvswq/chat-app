@@ -5,7 +5,6 @@ import {
   login,
   logout,
   updateProfile,
-  me,
 } from "../controllers/auth.controller";
 import { validateBody } from "../middleware/validateBody.middleware";
 import { protectRoute } from "../middleware/auth.middleware";
@@ -27,7 +26,5 @@ router.put(
   validateBody(updateUserSchema),
   updateProfile
 );
-
-router.get("/me", protectRoute, me);
 
 export default router;
