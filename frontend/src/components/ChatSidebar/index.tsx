@@ -1,4 +1,11 @@
 import React from "react";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+} from "@/components/ui/sidebar";
 import { Search } from "lucide-react";
 
 import { NavUser } from "./components/NavUser";
@@ -7,18 +14,20 @@ import { ChatContactList } from "./components/ChatContactList";
 
 const ChatSidebar: React.FC = () => {
   return (
-    <aside className="flex w-80 flex-col border border-r p-4">
-      <div className="mb-6 flex items-center justify-between">
+    <Sidebar>
+      <SidebarHeader className="mb-2 flex flex-row items-center justify-between p-4">
         <h1 className="text-2xl font-bold">Chat App</h1>
         <Search className="text-muted-foreground h-5 w-5 cursor-pointer" />
-      </div>
+      </SidebarHeader>
+      <SidebarContent className="px-4">
+        <ChatSidebarTabs className="mb-6" />
 
-      <ChatSidebarTabs className="mb-6" />
-
-      <ChatContactList />
-
-      <NavUser className="mt-6" />
-    </aside>
+        <ChatContactList />
+      </SidebarContent>
+      <SidebarFooter className="p-4">
+        <NavUser />
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 

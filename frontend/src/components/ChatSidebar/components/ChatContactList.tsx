@@ -12,6 +12,51 @@ const chatContacts = [
     name: "Jessica Wells",
     profilePic: "",
   },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
+  {
+    id: "2",
+    name: "Jessica Wells",
+    profilePic: "",
+  },
 ];
 
 export const ChatContactList: React.FC = () => {
