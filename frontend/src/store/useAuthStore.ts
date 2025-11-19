@@ -3,7 +3,10 @@ import { create } from "zustand";
 import { toast } from "sonner";
 
 import { axiosInstance } from "@/lib/axios";
-import { type createUserSchemaValues } from "@backend-schemas/user.schema";
+import {
+  type baseUserSchemaValues,
+  type createUserSchemaValues,
+} from "@backend-schemas/user.schema";
 
 interface AuthStore {
   authUser: {
@@ -18,6 +21,7 @@ interface AuthStore {
   isCheckingAuth: boolean;
   checkAuth: () => void;
   signup: (data: createUserSchemaValues) => void;
+  login: (data: baseUserSchemaValues) => void;
   logout: () => void;
 }
 
@@ -48,6 +52,14 @@ interface AuthStore {
  *
  * **Parameters:**
  * - `data` — User registration data validated by `createUserSchema`.
+ *
+ * ### login(data)
+ * Logs in a new user using the provided form data.
+ * On success, updates `authUser` and shows a success toast.
+ * On failure, displays an appropriate error toast.
+ *
+ * **Parameters:**
+ * - `data` — User login data validated by `baseUserSchema`.
  *
  * ### logout()
  * Calls the backend logout endpoint and clears the authenticated user.
@@ -97,6 +109,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
       }
     } finally {
       set({ isSigningUp: false });
+    }
+  },
+
+  login: async (data: baseUserSchemaValues) => {
+    set({ isLogingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      set({ authUser: res.data });
+      toast.success("Logged in successfully");
+    } catch (error) {
+      console.log("Error in login: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isLogingIn: false });
     }
   },
 
