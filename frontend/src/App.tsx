@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
@@ -9,6 +8,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import { useAuthStore } from "./store/useAuthStore";
 import { Loader } from "lucide-react";
+import { Toaster } from "sonner";
 
 const App: React.FC = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -16,8 +16,6 @@ const App: React.FC = () => {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  console.log(authUser);
 
   if (isCheckingAuth && !authUser) {
     return (
@@ -29,7 +27,6 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <NavBar />
       <Routes>
         <Route
           path="/"
@@ -52,6 +49,8 @@ const App: React.FC = () => {
           element={authUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
       </Routes>
+
+      <Toaster richColors />
     </div>
   );
 };

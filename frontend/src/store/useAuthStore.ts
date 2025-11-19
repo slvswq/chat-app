@@ -1,5 +1,9 @@
-import { axiosInstance } from "@/lib/axios";
+import axios from "axios";
 import { create } from "zustand";
+import { toast } from "sonner";
+
+import { axiosInstance } from "@/lib/axios";
+import { type createUserSchemaValues } from "@backend-schemas/user.schema";
 
 interface AuthStore {
   authUser: {
@@ -13,6 +17,7 @@ interface AuthStore {
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
   checkAuth: () => void;
+  signup: (data: createUserSchemaValues) => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -33,6 +38,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
+    }
+  },
+
+  signup: async (data: createUserSchemaValues) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axiosInstance.post("/auth/signup", data);
+      set({ authUser: res.data });
+      toast.success("Account created successfully");
+    } catch (error) {
+      console.log("Error in signup: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isSigningUp: false });
     }
   },
 }));

@@ -23,3 +23,7 @@ export const updateUserSchema = z.object({
     .max(70, "Name cannot exceed 70 characters"),
   profilePic: z.base64(),
 });
+
+export type baseUserSchemaValues = z.infer<typeof baseUserSchema>;
+export type createUserSchemaValues = z.infer<typeof createUserSchema>;
+export type updateUserSchemaValues = z.infer<typeof updateUserSchema>;

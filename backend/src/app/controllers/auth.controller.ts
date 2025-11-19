@@ -12,7 +12,7 @@ export const signup = async (req: Request, res: Response) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ error: "User with this email already exists" });
+        .json({ message: "User with this email already exists" });
     }
 
     // Create new User in the database
@@ -21,7 +21,7 @@ export const signup = async (req: Request, res: Response) => {
       email,
       password,
     });
-    if (!newUser) return res.status(400).json({ error: "Invalid user data" });
+    if (!newUser) return res.status(400).json({ message: "Invalid user data" });
 
     // Generate JWT token
     generateToken(newUser._id, res);
