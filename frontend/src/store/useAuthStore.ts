@@ -21,6 +21,46 @@ interface AuthStore {
   logout: () => void;
 }
 
+/**
+ * Global authentication store powered by Zustand.
+ *
+ * This store centralizes all authentication-related state and actions
+ * used across the application.
+ *
+ * ## State
+ * - `authUser`: The currently authenticated user or `null` if no session exists.
+ * - `isSigningUp`: Indicates whether a signup request is in progress.
+ * - `isLogingIn`: Indicates whether a login request is in progress.
+ * - `isUpdatingProfile`: Indicates whether the profile update is in progress.
+ * - `isCheckingAuth`: Indicates whether the initial session validation is running.
+ *
+ * ## Actions
+ *
+ * ### checkAuth()
+ * Sends a request to `/users/me` to determine whether the user
+ * is already authenticated. Updates `authUser` accordingly and
+ * disables the `isCheckingAuth` flag when finished.
+ *
+ * ### signup(data)
+ * Registers a new user using the provided form data.
+ * On success, updates `authUser` and shows a success toast.
+ * On failure, displays an appropriate error toast.
+ *
+ * **Parameters:**
+ * - `data` — User registration data validated by `createUserSchema`.
+ *
+ * ### logout()
+ * Calls the backend logout endpoint and clears the authenticated user.
+ * Shows a toast indicating success or error.
+ *
+ * ## Usage
+ * Use this hook anywhere in the application to access authentication state:
+ *
+ * ```tsx
+ * const { authUser, signup, logout, isSigningUp } = useAuthStore();
+ * ```
+ */
+
 export const useAuthStore = create<AuthStore>((set) => ({
   authUser: null,
   isSigningUp: false,
