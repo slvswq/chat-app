@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 import { ProtectedRoute } from "./guards/ProtectedRoute";
 import { GuestRoute } from "./guards/GuestRoute";
 
+import MainLayout from "./layouts/MainLayout";
+
 const App: React.FC = () => {
   const { checkAuth } = useAuthStore();
 
@@ -30,9 +32,11 @@ const App: React.FC = () => {
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
         </Route>
       </Routes>
 
