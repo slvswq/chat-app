@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import { ChatContact } from "./ChatContact";
 import { useChatStore } from "@/store/useChatStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { ChatContactListSkeleton } from "./skeletons/ChatContactListSkeleton";
 
 const ChatContactList: React.FC = () => {
   const { getUsers, users, isUsersLoading, selectedUser, setSelectedUser } =
     useChatStore();
 
-  const onlineUsers: string[] = [];
+  const { onlineUsers } = useAuthStore();
 
   useEffect(() => {
     getUsers();

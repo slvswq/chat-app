@@ -16,6 +16,8 @@ interface AuthStore {
   isLogingIn: boolean;
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
+  onlineUsers: string[];
+
   checkAuth: () => void;
   signup: (data: createUserSchemaValues) => void;
   login: (data: baseUserSchemaValues) => void;
@@ -35,6 +37,7 @@ interface AuthStore {
  * - `isLogingIn`: Indicates whether a login request is in progress.
  * - `isUpdatingProfile`: Indicates whether the profile update is in progress.
  * - `isCheckingAuth`: Indicates whether the initial session validation is running.
+ * - `onlineUsers`: List of all online users.
  *
  * ## Actions
  *
@@ -83,6 +86,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isSigningUp: false,
   isLogingIn: false,
   isUpdatingProfile: false,
+  onlineUsers: [],
 
   isCheckingAuth: true,
 
