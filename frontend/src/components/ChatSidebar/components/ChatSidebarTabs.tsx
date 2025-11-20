@@ -44,6 +44,7 @@ export const ChatSidebarTabs: React.FC<React.ComponentProps<"div">> = ({
         const { label, value, icon: Icon } = tab;
         return (
           <Button
+            key={value}
             variant="ghost"
             className={cn(
               "h-9 flex-1 rounded-md text-sm font-medium",
