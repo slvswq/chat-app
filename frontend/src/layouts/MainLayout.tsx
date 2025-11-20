@@ -2,6 +2,7 @@ import React from "react";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { Outlet } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar.tsx";
+import { ChatHeader } from "@/components/ChatHeader";
 
 const MainLayout: React.FC = () => {
   return (
@@ -15,7 +16,8 @@ const MainLayout: React.FC = () => {
     >
       <div className="flex h-screen w-full">
         <ChatSidebar />
-        <main className="flex-1">
+        <main className="flex-1 flex flex-col">
+          <ChatHeader />
           <Outlet />
         </main>
       </div>

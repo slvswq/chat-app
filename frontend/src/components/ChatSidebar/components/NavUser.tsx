@@ -35,14 +35,15 @@ export const NavUser: React.FC<React.ComponentProps<"div">> = ({
       <div className="w-full border-t"></div>
       <div className="flex-1 w-full flex gap-2">
         <Button
-          variant="secondary"
+          variant="link"
           className="text-left justify-start cursor-pointer"
           onClick={logout}
         >
           <LogOut />
+          <span className="sr-only">Logout</span>
         </Button>
         <Button
-          variant="secondary"
+          variant="link"
           className="flex-1 text-left justify-start cursor-pointer"
           asChild
         >

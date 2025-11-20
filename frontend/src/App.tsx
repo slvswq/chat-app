@@ -13,6 +13,8 @@ import { GuestRoute } from "./guards/GuestRoute";
 
 import MainLayout from "./layouts/MainLayout";
 
+import { RouteWatcher } from "@/components/RouterWatcher";
+
 const App: React.FC = () => {
   const { checkAuth } = useAuthStore();
 
@@ -22,6 +24,7 @@ const App: React.FC = () => {
 
   return (
     <div>
+      <RouteWatcher />
       <Routes>
         {/* Guest-only routes */}
         <Route element={<GuestRoute />}>
