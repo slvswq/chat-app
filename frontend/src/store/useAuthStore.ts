@@ -6,6 +6,7 @@ import { axiosInstance } from "@/lib/axios";
 import {
   type baseUserSchemaValues,
   type createUserSchemaValues,
+  type updateUserSchemaValues,
 } from "@backend-schemas/user.schema";
 
 interface AuthStore {
@@ -13,7 +14,6 @@ interface AuthStore {
     _id: string;
     email: string;
     fullName: string;
-    profilePic: string;
   } | null;
   isSigningUp: boolean;
   isLogingIn: boolean;
@@ -23,6 +23,7 @@ interface AuthStore {
   signup: (data: createUserSchemaValues) => void;
   login: (data: baseUserSchemaValues) => void;
   logout: () => void;
+  updateProfile: (data: updateUserSchemaValues) => void;
 }
 
 /**
@@ -55,6 +56,14 @@ interface AuthStore {
  *
  * ### login(data)
  * Logs in a new user using the provided form data.
+ * On success, updates `authUser` and shows a success toast.
+ * On failure, displays an appropriate error toast.
+ *
+ * **Parameters:**
+ * - `data` — User login data validated by `baseUserSchema`.
+ *
+ * ### updateProfile(data)
+ * Updates user's data in the DB using the provided form data.
  * On success, updates `authUser` and shows a success toast.
  * On failure, displays an appropriate error toast.
  *
@@ -142,6 +151,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
       } else {
         toast.error("Unexpected error");
       }
+    }
+  },
+
+  updateProfile: async (data: updateUserSchemaValues) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      set({ authUser: res.data });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.log("Error in updateProfile: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));

@@ -13,9 +13,9 @@ const MainLayout: React.FC = () => {
         } as any
       }
     >
-      <div className="flex h-screen">
+      <div className="flex h-screen w-full">
         <ChatSidebar />
-        <main>
+        <main className="flex-1">
           <Outlet />
         </main>
       </div>

@@ -28,6 +28,9 @@ interface FormFieldProps {
 
   /** Current input value (optional because RHF may supply it internally) */
   value?: string;
+
+  /** Whether the input is disabled */
+  disabled?: boolean;
 }
 
 /**
@@ -60,6 +63,7 @@ const FormField: React.FC<FormFieldProps> = ({
   placeholder,
   required,
   error,
+  disabled,
   ...rest
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -75,6 +79,7 @@ const FormField: React.FC<FormFieldProps> = ({
           required={required}
           aria-invalid={!!error}
           aria-describedby={description || error ? `${id}-desc` : undefined}
+          disabled={disabled}
           {...rest}
         />
         {type === "password" && (

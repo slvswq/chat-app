@@ -25,7 +25,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 }) => {
   return (
     <Field>
-      <Button type="submit" disabled={isSubmitting}>
+      <Button className="cursor-pointer" type="submit" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
             <Spinner />
