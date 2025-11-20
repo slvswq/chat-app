@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { toast } from "sonner";
 
 import { axiosInstance } from "@/lib/axios";
+import type { User } from "@/types/user";
 import {
   type baseUserSchemaValues,
   type createUserSchemaValues,
@@ -10,11 +11,7 @@ import {
 } from "@backend-schemas/user.schema";
 
 interface AuthStore {
-  authUser: {
-    _id: string;
-    email: string;
-    fullName: string;
-  } | null;
+  authUser: User | null;
   isSigningUp: boolean;
   isLogingIn: boolean;
   isUpdatingProfile: boolean;
@@ -81,7 +78,6 @@ interface AuthStore {
  * const { authUser, signup, logout, isSigningUp } = useAuthStore();
  * ```
  */
-
 export const useAuthStore = create<AuthStore>((set) => ({
   authUser: null,
   isSigningUp: false,
