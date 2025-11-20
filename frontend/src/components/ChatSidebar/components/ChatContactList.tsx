@@ -1,30 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { ChatContact } from "./ChatContact";
+import { useChatStore } from "@/store/useChatStore";
+import { ChatContactListSkeleton } from "./skeletons/ChatContactListSkeleton";
 
-const chatContacts = [
-  {
-    id: "1",
-    name: "Shannon Baker",
-  },
-  {
-    id: "2",
-    name: "Jessica Wells",
-  },
-];
+const ChatContactList: React.FC = () => {
+  const { getUsers, users, isUsersLoading, selectedUser, setSelectedUser } =
+    useChatStore();
 
-export const ChatContactList: React.FC = () => {
-  const [activeChatId, setActiveChatId] = useState<string>("1"); // Default active chat
+  const onlineUsers: string[] = [];
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
+  if (isUsersLoading) return <ChatContactListSkeleton />;
 
   return (
     <div className="flex-1 space-y-2 overflow-y-auto">
-      {chatContacts.map((contact) => (
+      {users.map((user) => (
         <ChatContact
-          key={contact.id}
-          {...contact}
-          isActive={contact.id === activeChatId}
-          onClick={setActiveChatId}
+          key={user._id}
+          {...user}
+          isActive={user._id === selectedUser?._id}
+          isOnline={onlineUsers.includes(user._id)}
+          onClick={() => setSelectedUser(user)}
         />
       ))}
     </div>
   );
 };
+
+export { ChatContactList };

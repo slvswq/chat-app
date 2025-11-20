@@ -15,6 +15,7 @@ interface ChatStore {
 
   getUsers: () => void;
   getMessages: (userId: string) => void;
+  setSelectedUser: (selectedUser: User) => void;
 }
 
 /**
@@ -41,6 +42,9 @@ interface ChatStore {
  * Fetches messages for a specific user from the backend API and updates `messages`.
  * Sets `isMessagesLoading` to `true` while fetching and `false` when done.
  * Shows an error toast if the request fails.
+ *
+ * ### setSelectedUser(user)
+ * Updates `selectedUser` with given user.
  *
  * **Parameters:**
  * - `userId` — The ID of the user whose messages should be fetched.
@@ -100,4 +104,6 @@ export const useChatStore = create<ChatStore>((set) => ({
       set({ isMessagesLoading: false });
     }
   },
+
+  setSelectedUser: (selectedUser: User) => set({ selectedUser }),
 }));

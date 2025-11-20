@@ -2,26 +2,26 @@ import type React from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { getInitials } from "@/utils/stringUtils";
 
 interface ChatContactProps {
-  id: string;
-  name: string;
+  fullName: string;
   isActive: boolean;
-  onClick: (id: string) => void;
+  isOnline?: boolean;
+  onClick: () => void;
 }
 
 /**
  * `ChatContact` represents a single contact in a chat list.
  * It displays the user's avatar, name, and highlights if the contact is active.
- * Clicking the contact triggers a callback with the user's ID.
  *
  * @component
  *
  * @param {Object} props - Component props
- * @param {string} props.id - Unique ID of the contact
  * @param {string} props.name - Name of the contact
  * @param {boolean} props.isActive - Whether the contact is currently active/selected
- * @param {(id: string) => void} props.onClick - Callback fired when the contact is clicked, receives the contact's ID
+ * @param {boolean} props.isActive - Whether the contact is online/offline
+ * @param {() => void} props.onClick - Callback fired when the contact is clicked
  *
  * @example
  * // Basic usage
@@ -29,14 +29,14 @@ interface ChatContactProps {
  *   id="123"
  *   name="John Doe"
  *   isActive={false}
- *   onClick={(id) => console.log("Clicked contact ID:", id)}
+ *   onClick={() => console.log("Contact is clicked!")}
  * />
  *
  */
 const ChatContact: React.FC<ChatContactProps> = ({
-  id,
-  name,
+  fullName,
   isActive,
+  isOnline,
   onClick,
 }) => (
   <div
@@ -44,15 +44,23 @@ const ChatContact: React.FC<ChatContactProps> = ({
       "hover:bg-muted flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors",
       isActive && "bg-muted"
     )}
-    onClick={() => onClick(id)}
+    onClick={() => onClick()}
   >
-    <Avatar>
-      <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+    <Avatar className="size-10">
+      <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
     </Avatar>
     <div className="flex-1">
       <div className="flex items-center justify-between">
-        <span className="font-medium">{name}</span>
+        <span className="truncate font-medium">{fullName}</span>
       </div>
+      <p
+        className={cn(
+          "truncate text-muted-foreground text-sm",
+          isOnline && "text-green-600"
+        )}
+      >
+        {isOnline ? "Online" : "Offline"}
+      </p>
     </div>
   </div>
 );
