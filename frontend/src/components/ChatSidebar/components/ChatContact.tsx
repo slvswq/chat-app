@@ -1,12 +1,11 @@
 import type React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 interface ChatContactProps {
   id: string;
   name: string;
-  profilePic: string;
   isActive: boolean;
   onClick: (id: string) => void;
 }
@@ -21,16 +20,14 @@ interface ChatContactProps {
  * @param {Object} props - Component props
  * @param {string} props.id - Unique ID of the contact
  * @param {string} props.name - Name of the contact
- * @param {string} props.profilePic - URL of the contact's profile picture
  * @param {boolean} props.isActive - Whether the contact is currently active/selected
  * @param {(id: string) => void} props.onClick - Callback fired when the contact is clicked, receives the contact's ID
  *
  * @example
  * // Basic usage
  * <ChatContact
- *   _id="123"
+ *   id="123"
  *   name="John Doe"
- *   profilePic="https://example.com/john.jpg"
  *   isActive={false}
  *   onClick={(id) => console.log("Clicked contact ID:", id)}
  * />
@@ -39,7 +36,6 @@ interface ChatContactProps {
 const ChatContact: React.FC<ChatContactProps> = ({
   id,
   name,
-  profilePic,
   isActive,
   onClick,
 }) => (
@@ -51,7 +47,6 @@ const ChatContact: React.FC<ChatContactProps> = ({
     onClick={() => onClick(id)}
   >
     <Avatar>
-      <AvatarImage src={profilePic} alt={name} />
       <AvatarFallback>{name.charAt(0)}</AvatarFallback>
     </Avatar>
     <div className="flex-1">

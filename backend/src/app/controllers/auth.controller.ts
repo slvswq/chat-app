@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken";
-import cloudinary from "../lib/cloudinary";
 
 export const signup = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -32,7 +31,6 @@ export const signup = async (req: Request, res: Response) => {
       _id: newUser._id,
       fullName: newUser.fullName,
       email: newUser.email,
-      profilePic: newUser.profilePic,
     });
   } catch (error) {
     console.log("Error in signup controller: ", error);
@@ -64,7 +62,6 @@ export const login = async (req: Request, res: Response) => {
       _id: user._id,
       fullName: user.fullName,
       email: user.email,
-      profilePic: user.profilePic,
     });
   } catch (error) {
     console.log("Error in login controller: ", error);
@@ -86,19 +83,15 @@ export const logout = (req: Request, res: Response) => {
 };
 
 export const updateProfile = async (req: Request, res: Response) => {
-  const { fullName, profilePic } = req.body;
+  const { fullName } = req.body;
   try {
     const userId = req.user._id;
-
-    // Upload new profilePic to cloudibary
-    const uploadReponse = await cloudinary.uploader.upload(profilePic);
 
     // Update the user entry in the DB
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         fullName,
-        profilePic: uploadReponse.secure_url,
       },
       { new: true }
     );

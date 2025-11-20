@@ -5,12 +5,10 @@ const chatContacts = [
   {
     id: "1",
     name: "Shannon Baker",
-    profilePic: "",
   },
   {
     id: "2",
     name: "Jessica Wells",
-    profilePic: "",
   },
 ];
 

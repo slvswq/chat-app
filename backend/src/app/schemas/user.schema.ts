@@ -21,7 +21,6 @@ export const updateUserSchema = z.object({
     .string()
     .min(2, "Name must be at least 2 characters long")
     .max(70, "Name cannot exceed 70 characters"),
-  profilePic: z.base64(),
 });
 
 export type baseUserSchemaValues = z.infer<typeof baseUserSchema>;

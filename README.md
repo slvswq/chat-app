@@ -14,7 +14,6 @@ The project includes real-time communication, channel management, user search, m
 
 ## Features
 - **Backend API** – Node.js + Express.js handles authentication and data management.
-- **Cloudinary** – uploading images.
 - **Database** – MongoDB for storing users and messages.
 - **Integration Testing** – vitest, supertest, and mongodb-memory-server.
 
@@ -30,7 +29,6 @@ The project includes real-time communication, channel management, user search, m
 -   Node.js >= 18
 -   pnpm >= 8
 - MongoDB Atlas project (for Authentication, Database, and Storage)
-- Cloudinary project (for storing & uploading images)
 > Note: This project is built using **pnpm**. Using npm or yarn may work, but pnpm is recommended to avoid dependency issues.
 
 ### 1. Clone the repository
@@ -57,10 +55,6 @@ MONGODB_URI=your_mongo_uri
 
 JWT_SECRET=mysecretkey
 NODE_ENV=development
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 ### 4. Running the App (dev mode)
 #### Backend:
