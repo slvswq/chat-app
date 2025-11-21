@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Message from "../models/message.model";
 import User from "../models/user.model";
+import { getIo, getReceiverSocketId } from "../lib/socket";
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
@@ -50,6 +51,12 @@ export const sendMessage = async (req: Request, res: Response) => {
       text,
     });
     await newMessage.save();
+
+    // Get the receiver’s socket ID and send them a newMessage event if they are online
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      getIo().to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     // Send message with 201 (Created) status code and message data
     res.status(201).json(newMessage);

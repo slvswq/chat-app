@@ -5,6 +5,7 @@ import type { User } from "@/types/user";
 import type { Message } from "@/types/message";
 
 import { axiosInstance } from "@/lib/axios";
+import { useAuthStore } from "./useAuthStore";
 import { type createMessageSchemaValues } from "@backend-schemas/message.schema";
 
 interface ChatStore {
@@ -18,6 +19,8 @@ interface ChatStore {
   getMessages: (userId: string) => void;
   sendMessage: (messageData: createMessageSchemaValues) => void;
   setSelectedUser: (selectedUser: User | null) => void;
+  subscribeToMessages: () => void;
+  unsubscribeFromMessages: () => void;
 }
 
 /**
@@ -56,6 +59,13 @@ interface ChatStore {
  *
  * **Parameters:**
  * - `userId` — The ID of the user whose messages should be fetched.
+ *
+ * ### subscribeToMessages()
+ * Start listening to `newMessage` event using WebSockets and dynamically updates
+ * the messages list with new messages.
+ *
+ * ### unsubscribeFromMessages()
+ * Removes listener to `newMessage` event created by subscribeToMessages() function.
  *
  * ## Usage
  * Use this hook anywhere in the application to access chat state:
@@ -129,6 +139,28 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         toast.error("Unexpected error");
       }
     }
+  },
+
+  subscribeToMessages: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+
+    socket.on("newMessage", (newMessage: Message) => {
+      const isSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isSentFromSelectedUser) return;
+
+      set({ messages: [...get().messages, newMessage] });
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+
+    socket.off("newMessage");
   },
 
   setSelectedUser: (selectedUser: User | null) => set({ selectedUser }),

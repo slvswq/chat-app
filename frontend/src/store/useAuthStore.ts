@@ -1,6 +1,7 @@
 import axios from "axios";
 import { create } from "zustand";
 import { toast } from "sonner";
+import { io, type Socket } from "socket.io-client";
 
 import { axiosInstance } from "@/lib/axios";
 import type { User } from "@/types/user";
@@ -17,12 +18,15 @@ interface AuthStore {
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
   onlineUsers: string[];
+  socket: Socket | null;
 
   checkAuth: () => void;
   signup: (data: createUserSchemaValues) => void;
   login: (data: baseUserSchemaValues) => void;
   logout: () => void;
   updateProfile: (data: updateUserSchemaValues) => void;
+  connectSocket: () => void;
+  disconnectSocket: () => void;
 }
 
 /**
@@ -38,6 +42,7 @@ interface AuthStore {
  * - `isUpdatingProfile`: Indicates whether the profile update is in progress.
  * - `isCheckingAuth`: Indicates whether the initial session validation is running.
  * - `onlineUsers`: List of all online users.
+ * - `socket`: Active WebSocket connection.
  *
  * ## Actions
  *
@@ -47,7 +52,7 @@ interface AuthStore {
  * disables the `isCheckingAuth` flag when finished.
  *
  * ### signup(data)
- * Registers a new user using the provided form data.
+ * Registers a new user using the provided form data and calls connectSocket function.
  * On success, updates `authUser` and shows a success toast.
  * On failure, displays an appropriate error toast.
  *
@@ -55,7 +60,7 @@ interface AuthStore {
  * - `data` — User registration data validated by `createUserSchema`.
  *
  * ### login(data)
- * Logs in a new user using the provided form data.
+ * Logs in a new user using the provided form data and calls connectSocket function.
  * On success, updates `authUser` and shows a success toast.
  * On failure, displays an appropriate error toast.
  *
@@ -71,8 +76,15 @@ interface AuthStore {
  * - `data` — User login data validated by `baseUserSchema`.
  *
  * ### logout()
- * Calls the backend logout endpoint and clears the authenticated user.
+ * Calls the backend logout endpoint, clears the authenticated user, and calls disconnectSocket function.
  * Shows a toast indicating success or error.
+ *
+ * ### connectSocket()
+ * Establishes a WebSocket connection with the server and creates listener to getOnlineUsers event
+ * that dynamically updates onlineUsers list.
+ *
+ * ### disconnectSocket()
+ * Terminates the active WebSocket connection.
  *
  * ## Usage
  * Use this hook anywhere in the application to access authentication state:
@@ -81,12 +93,13 @@ interface AuthStore {
  * const { authUser, signup, logout, isSigningUp } = useAuthStore();
  * ```
  */
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLogingIn: false,
   isUpdatingProfile: false,
   onlineUsers: [],
+  socket: null,
 
   isCheckingAuth: true,
 
@@ -95,6 +108,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const res = await axiosInstance.get("/users/me");
 
       set({ authUser: res.data });
+      get().connectSocket();
     } catch (error) {
       console.log("Error in checkAuth: ", error);
       set({ authUser: null });
@@ -109,6 +123,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const res = await axiosInstance.post("/auth/signup", data);
       set({ authUser: res.data });
       toast.success("Account created successfully");
+      get().connectSocket();
     } catch (error) {
       console.log("Error in signup: ", error);
       if (axios.isAxiosError(error)) {
@@ -127,6 +142,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
       toast.success("Logged in successfully");
+      get().connectSocket();
     } catch (error) {
       console.log("Error in login: ", error);
       if (axios.isAxiosError(error)) {
@@ -144,6 +160,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("Logged out successfully");
+      get().disconnectSocket();
     } catch (error) {
       console.log("Error in logout: ", error);
       if (axios.isAxiosError(error)) {
@@ -170,5 +187,27 @@ export const useAuthStore = create<AuthStore>((set) => ({
     } finally {
       set({ isUpdatingProfile: false });
     }
+  },
+
+  connectSocket: () => {
+    const { authUser, socket } = get();
+    if (!authUser || socket?.connected) return;
+
+    const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
+      transports: ["websocket"],
+      autoConnect: true,
+      query: {
+        userId: authUser._id,
+      },
+    });
+
+    set({ socket: newSocket });
+
+    newSocket.on("getOnlineUsers", (userIds: string[]) => {
+      set({ onlineUsers: userIds });
+    });
+  },
+  disconnectSocket: () => {
+    if (get().socket?.connected) get().socket?.disconnect();
   },
 }));

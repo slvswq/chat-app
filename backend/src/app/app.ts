@@ -1,5 +1,4 @@
-import express from "express";
-import type { Express } from "express";
+import express, { type Express } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 

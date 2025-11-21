@@ -5,12 +5,26 @@ import { MessageListSkeleton } from "./skeletons/MessageListSkeleton";
 import { MessageBubble } from "./MessageBubble";
 
 const MessageList: React.FC = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser } =
-    useChatStore();
+  const {
+    messages,
+    getMessages,
+    isMessagesLoading,
+    selectedUser,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
 
   useEffect(() => {
     if (selectedUser?._id) getMessages(selectedUser._id);
-  }, [selectedUser?._id, getMessages]);
+
+    subscribeToMessages();
+    return () => unsubscribeFromMessages();
+  }, [
+    selectedUser?._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
   if (isMessagesLoading) return <MessageListSkeleton />;
 

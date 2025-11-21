@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/utils/stringUtils";
@@ -22,7 +23,12 @@ const ChatHeader: React.FC = () => {
           </Avatar>
           <div>
             <h2 className="font-semibold">{selectedUser?.fullName}</h2>
-            <p className="text-muted-foreground text-sm">
+            <p
+              className={cn(
+                "text-muted-foreground text-sm",
+                onlineUsers?.includes(selectedUser._id) && "text-green-600"
+              )}
+            >
               {onlineUsers?.includes(selectedUser._id) ? "Online" : "Offline"}
             </p>
           </div>
