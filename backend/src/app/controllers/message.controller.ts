@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
+import mongoose from "mongoose";
 import Message from "../models/message.model";
+import User from "../models/user.model";
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
@@ -9,8 +11,8 @@ export const getMessages = async (req: Request, res: Response) => {
     // Get all messages between the two specified users
     const messages = await Message.find({
       $or: [
-        { senderId: myId, recieverId: userToChatId },
-        { senderId: userToChatId, recieverId: myId },
+        { senderId: myId, receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId },
       ],
     });
 
@@ -23,15 +25,28 @@ export const getMessages = async (req: Request, res: Response) => {
 };
 
 export const sendMessage = async (req: Request, res: Response) => {
+  const { text } = req.body;
   try {
-    const { text } = req.body;
-    const { id: recieverId } = req.params;
+    const { id: receiverId } = req.params;
     const myId = req.user._id;
+
+    if (!receiverId) {
+      return res.status(400).json({ message: "Receiver ID is missing" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(receiverId)) {
+      return res.status(400).json({ message: "Receiver ID is not valid" });
+    }
+
+    const receiver = await User.findById(receiverId);
+    if (!receiver) {
+      return res.status(404).json({ message: "Receiver not found" });
+    }
 
     // Create new Message in the DB
     const newMessage = await Message.create({
       senderId: myId,
-      recieverId,
+      receiverId,
       text,
     });
     await newMessage.save();
