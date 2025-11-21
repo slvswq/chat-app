@@ -5,6 +5,7 @@ import type { User } from "@/types/user";
 import type { Message } from "@/types/message";
 
 import { axiosInstance } from "@/lib/axios";
+import { type createMessageSchemaValues } from "@backend-schemas/message.schema";
 
 interface ChatStore {
   messages: Message[];
@@ -15,6 +16,7 @@ interface ChatStore {
 
   getUsers: () => void;
   getMessages: (userId: string) => void;
+  sendMessage: (messageData: createMessageSchemaValues) => void;
   setSelectedUser: (selectedUser: User | null) => void;
 }
 
@@ -44,6 +46,12 @@ interface ChatStore {
  * Shows an error toast if the request fails.
  *
  * ### setSelectedUser(user)
+ * Adds new `Message` to the database with given data.
+ *
+ * **Parameters:**
+ * - `messageData` — the data with message text, senderId, and receiverId.
+ *
+ * ### setSelectedUser(user)
  * Updates `selectedUser` with given user.
  *
  * **Parameters:**
@@ -64,7 +72,7 @@ interface ChatStore {
  * };
  * ```
  */
-export const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -102,6 +110,24 @@ export const useChatStore = create<ChatStore>((set) => ({
       }
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  sendMessage: async (messageData: createMessageSchemaValues) => {
+    const { selectedUser, messages } = get();
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser?._id}`,
+        messageData
+      );
+      set({ messages: [...messages, res.data] });
+    } catch (error) {
+      console.log("Error in sendMessage: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
     }
   },
 

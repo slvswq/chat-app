@@ -12,7 +12,7 @@ import { MessagesSquare } from "lucide-react";
 
 const NoChatSelected: React.FC = () => {
   return (
-    <Empty className="h-full bg-muted">
+    <Empty className="h-full bg-muted rounded-none">
       <EmptyHeader>
         <EmptyMedia className="mb-6" variant="icon">
           <MessagesSquare className="size-12" />

@@ -1,27 +1,28 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { getInitials } from "@/utils/stringUtils";
 
 interface MessageBubbleProps {
+  senderName?: string;
   message: string;
-  isUserMessage: boolean;
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({
+  senderName,
   message,
-  isUserMessage,
 }) => (
   <div
-    className={cn("flex items-start gap-3", isUserMessage ? "justify-end" : "")}
+    className={cn("flex items-start gap-3", !senderName ? "justify-end" : "")}
   >
-    {!isUserMessage && (
+    {senderName && (
       <Avatar className="h-8 w-8">
-        <AvatarFallback>U</AvatarFallback>
+        <AvatarFallback>{getInitials(senderName)}</AvatarFallback>
       </Avatar>
     )}
     <div
       className={cn(
         "max-w-[70%] rounded-lg p-3",
-        isUserMessage
+        !senderName
           ? "bg-primary text-primary-foreground rounded-br-none"
           : "rounded-bl-none"
       )}
