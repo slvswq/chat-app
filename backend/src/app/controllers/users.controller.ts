@@ -10,13 +10,25 @@ export const getMe = (req: Request, res: Response) => {
   }
 };
 
-export const getUsers = async (req: Request, res: Response) => {
+interface GetUsersQuery {
+  search?: string;
+}
+
+export const getUsers = async (
+  req: Request<{}, {}, {}, GetUsersQuery>,
+  res: Response
+) => {
   try {
-    // Get all users except yourself
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({
-      _id: { $ne: loggedInUserId },
-    }).select("-password");
+    const { search } = req.query;
+
+    // Get all users except yourself and filter them by the search param
+    let query: any = { _id: { $ne: loggedInUserId } };
+    if (search && search.trim() !== "") {
+      const regex = new RegExp(search.trim(), "i"); // case-insensitive search
+      query.fullName = regex;
+    }
+    const filteredUsers = await User.find(query).select("-password");
 
     res.status(200).json(filteredUsers);
   } catch (error) {
