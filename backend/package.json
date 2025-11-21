@@ -4,10 +4,11 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
     "dev": "pnpm tsx watch src/index.ts",
     "test": "pnpm vitest",
-    "test:watch": "pnpm vitest --watch"
+    "test:watch": "pnpm vitest --watch",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -29,10 +30,15 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
     "mongodb-memory-server": "^10.3.0",
+    "rollup": "^4.53.3",
+    "rollup-plugin-typescript2": "^0.36.0",
     "supertest": "^7.1.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",

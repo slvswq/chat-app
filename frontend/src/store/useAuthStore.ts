@@ -193,13 +193,18 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     const { authUser, socket } = get();
     if (!authUser || socket?.connected) return;
 
-    const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
-      transports: ["websocket"],
-      autoConnect: true,
-      query: {
-        userId: authUser._id,
-      },
-    });
+    const newSocket = io(
+      import.meta.env.MODE === "development"
+        ? import.meta.env.VITE_BACKEND_URL
+        : "/",
+      {
+        transports: ["websocket"],
+        autoConnect: true,
+        query: {
+          userId: authUser._id,
+        },
+      }
+    );
 
     set({ socket: newSocket });
 

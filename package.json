@@ -1,0 +1,10 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "bootstrap": "pnpm -C backend install && pnpm -C frontend install",
+    "build": "pnpm -C backend build && pnpm -C frontend build",
+    "start": "pnpm -C backend start"
+  }
+}
