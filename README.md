@@ -1,83 +1,126 @@
 # Chat App — Full-Stack Web Messenger
-A full-stack real-time messaging application built with **MERN Stack**. 
 
-The project includes real-time communication, channel management, user search, media uploads, and a pleasant, responsive UI.
+A full-stack real-time messaging application built with the **MERN Stack** (MongoDB, Express, React, Node.js).
 
-## Functionality
-- **JWT**-based authentication
--   **Real-time messaging** between users.
--   Users can **create new channels** or **join existing ones**.
--   Each channel displays a **list of participants**.
--   Built-in **user search** to quickly find people.
--   A **pleasant, user-friendly UI** for a smooth experience.
--   Channel creators have the ability to **remove users** from their channels.
+This app supports **real-time messaging**, channel management, user search, and provides a responsive and user-friendly interface.
+
+---
 
 ## Features
-- **Backend API** – Node.js + Express.js handles authentication and data management.
-- **Database** – MongoDB for storing users and messages.
-- **Integration Testing** – vitest, supertest, and mongodb-memory-server.
+
+- **JWT-based authentication** for secure login.
+- **Real-time messaging** between users using Socket.io.
+- Users can **create new channels** or **join existing ones**.
+- Each channel displays a **list of participants**.
+- Built-in **user search** to quickly find people.
+- Channel creators can **remove users** from their channels.
+- Responsive and intuitive **frontend UI**.
+
+---
 
 ## Tech Stack
-- Frontend: Vite + React.js.
-- Backend: Node.js + Express.js.
--   Language: TypeScript.
-- Database & Auth: MongoDB Atlas, mongoose, jsonwebtoken.
 
-## Setup & Installation
+- **Frontend:** React, TailwindCSS, Vite, React Router, React Hook Form, Zustand
+- **Backend:** Node.js, Express, MongoDB, Mongoose, Socket.io
+- **Authentication:** JWT (JSON Web Tokens)
+- **Testing:** Vitest, Supertest, mongodb-memory-server
+- **Build tools:** Rollup (backend), Vite (frontend), TypeScript
+
+---
+
+## Getting Started
 
 ### Prerequisites
--   Node.js >= 18
--   pnpm >= 8
-- MongoDB Atlas project (for Authentication, Database, and Storage)
-> Note: This project is built using **pnpm**. Using npm or yarn may work, but pnpm is recommended to avoid dependency issues.
 
-### 1. Clone the repository
+- Node.js v20+
+- pnpm v10+
+- MongoDB Atlas account (or local MongoDB instance)
+
+### Installation
+
+Clone the repository:
+
 ```bash
 git clone git@github.com:slvswq/chat-app.git
 cd chat-app
 ```
-### 2. Install dependencies
-#### Backend:
+
+Install dependencies for both backend and frontend:
+
 ```bash
-cd backend
-pnpm install
+pnpm bootstrap
 ```
-#### Frontend:
-```bash
-cd frontend
-pnpm install
-```
-### 3. Environment Variables
-Rename `.env.example` file in **/backend** to `.env`:
+
+### Evironment variables
+
+Create `.env` files in both `backend` and `frontend` folders.
+
+**Backend `.env`:**
+
 ```ini
 PORT=5001
-MONGODB_URI=your_mongo_uri
-
-JWT_SECRET=mysecretkey
+MONGODB_URI=<your-mongodb-uri>
+JWT_SECRET=<your-jwt-secret>
+CORS_ORIGIN=http://localhost:5173
 NODE_ENV=development
 ```
-### 4. Running the App (dev mode)
-#### Backend:
+
+**Frontend `.env` (only for development):**
+
+```ini
+VITE_BACKEND_URL=http://localhost:5001
+```
+
+### Running the project
+
+#### Start in production mode:
+
+```bash
+pnpm build
+pnpm start
+```
+
+#### Start in development mode:
+
+**Backend**
+
 ```bash
 cd backend
 pnpm dev
 ```
-#### Frontend:
+
+**Frontend**
+
 ```bash
 cd frontend
 pnpm dev
 ```
-## Scripts
 
-### Backend:
--   `pnpm dev` – run backend in development mode
--   `pnpm build` – build project
-- `pnpm test` – run vitest
-- `pnpm test:watch` - run vitest in watch mode
+### Scripts
 
-### Frontend:
--   `pnpm dev` – run frontend in development mode
--   `pnpm build` – build production React app
--   `pnpm lint` - run eslint.
--   `pnpm preview` - start web server that serves the built solution 
+**Root `package.json`**
 
+```bash
+pnpm bootstrap  # Install backend & frontend dependencies
+pnpm build      # Build backend & frontend
+pnpm start      # Start backend server that serves all frontend files
+```
+
+**Backend `package.json`**
+
+```bash
+pnpm dev          # Start backend in development
+pnpm build        # Build backend using Rollup
+pnpm start        # Start backend in production
+pnpm test         # Run backend tests
+pnpm test:watch   # Run backend tests in watch mode
+```
+
+**Frontend `package.json`**
+
+```bash
+pnpm dev       # Start frontend dev server
+pnpm build     # Build frontend
+pnpm preview   # Preview production build
+pnpm lint      # Run ESLint
+```
