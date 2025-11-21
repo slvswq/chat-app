@@ -15,7 +15,7 @@ interface ChatStore {
   isUsersLoading: boolean;
   isMessagesLoading: boolean;
 
-  getUsers: () => void;
+  getUsers: (searchQuery?: string) => void;
   getMessages: (userId: string) => void;
   sendMessage: (messageData: createMessageSchemaValues) => void;
   setSelectedUser: (selectedUser: User | null) => void;
@@ -38,10 +38,14 @@ interface ChatStore {
  *
  * ## Actions
  *
- * ### getUsers()
- * Fetches all users from the backend API and updates `users`.
+ * ### getUsers(searchQuery)
+ * Fetches users whose fullName matches searchQuery.
+ * Otherwise fetches all users from the backend API and updates `users`.
  * Sets `isUsersLoading` to `true` while fetching and `false` when done.
  * Shows an error toast if the request fails.
+ *
+ * **Parameters:**
+ * - `searchQuery` — the search query (optional).
  *
  * ### getMessages(userId)
  * Fetches messages for a specific user from the backend API and updates `messages`.
@@ -89,10 +93,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isUsersLoading: false,
   isMessagesLoading: false,
 
-  getUsers: async () => {
+  getUsers: async (searchQuery?: string) => {
     set({ isUsersLoading: true });
     try {
-      const res = await axiosInstance.get("/users");
+      const res = await axiosInstance.get(`/users?search=${searchQuery ?? ""}`);
       set({ users: res.data });
     } catch (error) {
       console.log("Error in getUsers: ", error);
