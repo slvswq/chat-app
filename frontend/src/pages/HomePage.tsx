@@ -4,9 +4,13 @@ import { useChatStore } from "@/store/useChatStore";
 import { ChatContainer } from "@/components/ChatContainer";
 
 const HomePage: React.FC = () => {
-  const { selectedUser } = useChatStore();
+  const { currentTab, selectedUser, selectedChannel } = useChatStore();
 
-  return <>{!selectedUser ? <NoChatSelected /> : <ChatContainer />}</>;
+  const isChatOpened =
+    (currentTab === "personal" && selectedUser) ||
+    (currentTab === "channels" && selectedChannel);
+
+  return <>{isChatOpened ? <ChatContainer /> : <NoChatSelected />}</>;
 };
 
 export default HomePage;

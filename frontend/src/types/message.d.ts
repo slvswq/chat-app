@@ -7,7 +7,7 @@ export interface Message {
 
 export interface ChannelMessage {
   _id?: string;
-  senderId: {
+  sender: {
     _id: string;
     fullName: string;
   };

@@ -38,6 +38,7 @@ interface ChatStore {
   unsubscribeFromMessages: () => void;
 
   getChannels: (searchQuery?: string) => void;
+  getChannelMessages: (channelId: string) => void;
   sendChannelMessage: (messageData: createMessageSchemaValues) => void;
   createChannel: (data: channelSchemaValues) => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
@@ -302,7 +303,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   getChannelMessages: async (channelId: string) => {
     set({ isChannelMessagesLoading: true });
     try {
-      const res = await axiosInstance.get(`/messages/${channelId}`);
+      const res = await axiosInstance.get(`/messages/channel/${channelId}`);
       set({ channelMessages: res.data });
     } catch (error) {
       console.log("Error in getChannelMessages: ", error);
