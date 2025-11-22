@@ -4,11 +4,13 @@ import {
   getChannels,
   createChannel,
   updateChannelInfo,
+  addChannelMembers,
 } from "../controllers/channel.controller";
 import { validateBody } from "../middleware/validateBody.middleware";
 import {
   channelInfoSchema,
   createChannelSchema,
+  addChannelMembersSchema,
 } from "../schemas/channel.schema";
 
 const router: Router = express.Router();
@@ -18,6 +20,11 @@ router.use(protectRoute);
 router.get("/", getChannels);
 
 router.post("/create", validateBody(createChannelSchema), createChannel);
+router.post(
+  "/:id/members",
+  validateBody(addChannelMembersSchema),
+  addChannelMembers
+);
 
 router.patch("/:id", validateBody(channelInfoSchema), updateChannelInfo);
 

@@ -9,4 +9,12 @@ export const createChannelSchema = channelInfoSchema.safeExtend({
   members: z.array(objectIdSchema).optional(),
 });
 
+export const addChannelMembersSchema = z.object({
+  members: z.array(objectIdSchema),
+});
+
+export type channelInfoSchemaValues = z.infer<typeof channelInfoSchema>;
 export type createChannelSchemaValues = z.infer<typeof createChannelSchema>;
+export type addChannelMembersSchemaValues = z.infer<
+  typeof addChannelMembersSchema
+>;
