@@ -14,7 +14,7 @@ const RouteWatcher: React.FC = () => {
   useEffect(() => {
     if (pathname !== "/") {
       setSelectedUser(null);
-      setSelectedChannel(null);
+      if (pathname !== "/edit-channel") setSelectedChannel(null);
     }
   }, [pathname, setSelectedUser, setSelectedChannel]);
 
