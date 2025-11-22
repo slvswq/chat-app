@@ -6,6 +6,7 @@ import path from "path";
 import authRoutes from "./routes/auth.route";
 import messageRoutes from "./routes/messages.route";
 import userRoutes from "./routes/users.route";
+import channelRoutes from "./routes/channel.route";
 
 const __dirname = path.resolve();
 
@@ -25,6 +26,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/channels", channelRoutes);
 
 // Production SPA setup
 if (process.env.NODE_ENV === "production") {
