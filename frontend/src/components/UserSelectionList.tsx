@@ -65,7 +65,7 @@ export function UserSelectionList({
                 <AvatarFallback>{getInitials(user.fullName)}</AvatarFallback>
               </Avatar>
 
-              <span>{user.fullName}</span>
+              <span className="truncate">{user.fullName}</span>
             </FieldLabel>
           ))
         )}

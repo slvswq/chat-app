@@ -51,7 +51,7 @@ const ChatChannel: React.FC<ChatChannelProps> = ({
     </Avatar>
     <div className="flex-1">
       <div className="flex items-center justify-between">
-        <span className="truncate font-medium">{name}</span>
+        <span className="truncate font-medium max-w-50">{name}</span>
       </div>
       <p className="truncate text-muted-foreground text-sm">
         {amountOfMembers} {amountOfMembers > 1 ? "members" : "member"}
