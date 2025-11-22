@@ -109,6 +109,30 @@ export const addChannelMembers = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteChannelMember = async (req: Request, res: Response) => {
+  const { memberId } = req.params;
+  try {
+    const channelId = getChannelId(req, res);
+    if (!channelId) return;
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Remove given memberId from the list of members
+    const currentMembers = channel.members.map((id) => id.toString());
+    channel.members = currentMembers.filter((id) => id !== memberId) as any[];
+    await channel.save();
+
+    // Send message with 200 (OK) status code and updated channel data
+    return res.status(200).json(channel);
+  } catch (error) {
+    console.log("Error in deleteChannelMember controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 /**
  * Extracts and validates the `channelId` parameter from the request.
  *
