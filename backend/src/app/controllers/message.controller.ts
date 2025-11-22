@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import Message from "../models/message.model";
+import Channel from "../models/channel.model";
 import User from "../models/user.model";
 import { getIo, getReceiverSocketId } from "../lib/socket";
 
@@ -69,9 +70,23 @@ export const sendMessage = async (req: Request, res: Response) => {
 export const getChannelMessages = async (req: Request, res: Response) => {
   try {
     const { id: channelId } = req.params;
+    const myId = req.user._id;
 
     if (!channelId || !mongoose.Types.ObjectId.isValid(channelId)) {
       return res.status(400).json({ message: "Invalid channel ID" });
+    }
+
+    // Check if the cannel exists
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Check if the user is channel member
+    if (!channel.members.includes(myId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not a member of this channel" });
     }
 
     // Get all messages from the channel and fetch senders' names
@@ -101,6 +116,19 @@ export const sendChannelMessage = async (req: Request, res: Response) => {
 
     if (!channelId || !mongoose.Types.ObjectId.isValid(channelId)) {
       return res.status(400).json({ message: "Invalid channel ID" });
+    }
+
+    // Check if the cannel exists
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Check if the user is channel member
+    if (!channel.members.includes(myId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not a member of this channel" });
     }
 
     const newMessage = await Message.create({

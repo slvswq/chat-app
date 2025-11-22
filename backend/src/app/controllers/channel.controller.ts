@@ -59,23 +59,29 @@ export const createChannel = async (req: Request, res: Response) => {
 export const updateChannelInfo = async (req: Request, res: Response) => {
   const { name } = req.body;
   try {
+    const myId = req.user._id;
+
     const channelId = getChannelId(req, res);
     if (!channelId) return;
 
     // Update the user entry in the DB
-    const updatedChannel = await Channel.findByIdAndUpdate(
-      channelId,
-      {
-        name,
-      },
-      { new: true }
-    );
-    if (!updatedChannel) {
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
     }
 
-    // Send message with 200 (OK) status code and updatedChannel data
-    return res.status(200).json(updatedChannel);
+    // Check if the user is the channel creator
+    if (channel.creator.toString() !== myId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the channel creator can perform this action" });
+    }
+
+    channel.name = name;
+    await channel.save();
+
+    // Send message with 200 (OK) status code and updated channel data
+    return res.status(200).json(channel);
   } catch (error) {
     console.log("Error in updateChannelInfo controller: ", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -85,6 +91,8 @@ export const updateChannelInfo = async (req: Request, res: Response) => {
 export const addChannelMembers = async (req: Request, res: Response) => {
   const { members } = req.body;
   try {
+    const myId = req.user._id;
+
     const channelId = getChannelId(req, res);
     if (!channelId) return;
 
@@ -94,6 +102,13 @@ export const addChannelMembers = async (req: Request, res: Response) => {
     const channel = await Channel.findById(channelId);
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Check if the user is the channel creator
+    if (channel.creator.toString() !== myId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the channel creator can perform this action" });
     }
 
     // Add new member IDs to the list of members
@@ -112,12 +127,21 @@ export const addChannelMembers = async (req: Request, res: Response) => {
 export const deleteChannelMember = async (req: Request, res: Response) => {
   const { memberId } = req.params;
   try {
+    const myId = req.user._id;
+
     const channelId = getChannelId(req, res);
     if (!channelId) return;
 
     const channel = await Channel.findById(channelId);
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Check if the user is the channel creator
+    if (channel.creator.toString() !== myId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the channel creator can perform this action" });
     }
 
     // Remove given memberId from the list of members
@@ -135,12 +159,21 @@ export const deleteChannelMember = async (req: Request, res: Response) => {
 
 export const deleteChannel = async (req: Request, res: Response) => {
   try {
+    const myId = req.user._id;
+
     const channelId = getChannelId(req, res);
     if (!channelId) return;
 
     const channel = await Channel.findByIdAndDelete(channelId);
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Check if the user is the channel creator
+    if (channel.creator.toString() !== myId.toString()) {
+      return res
+        .status(403)
+        .json({ message: "Only the channel creator can perform this action" });
     }
 
     // Send message with 204 (No content)
@@ -190,11 +223,11 @@ function getChannelId(req: Request, res: Response) {
  * @param members - Array of user ID strings to validate.
  * @returns `true` if all members exist, or `false` if validation fails.
  */
-async function checkMembers(res: Response, members: string[]) {
+async function checkMembers(res: Response, members: string[] | undefined) {
   const existingUsers = await User.find({ _id: { $in: members } }).select(
     "_id"
   );
-  if (existingUsers.length !== members.length) {
+  if (existingUsers.length !== (members?.length ?? 0)) {
     res.status(400).json({
       message: "One or more member IDs do not exist",
     });
