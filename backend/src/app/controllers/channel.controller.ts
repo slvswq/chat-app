@@ -2,6 +2,32 @@ import type { Request, Response } from "express";
 import User from "../models/user.model";
 import Channel from "../models/channel.model";
 
+interface GetChannelsQuery {
+  search?: string;
+}
+
+export const getChannels = async (
+  req: Request<{}, {}, {}, GetChannelsQuery>,
+  res: Response
+) => {
+  try {
+    const { search } = req.query;
+
+    // Get all channels filter them by the search param
+    let query: any = {};
+    if (search && search.trim() !== "") {
+      const regex = new RegExp(search.trim(), "i"); // case-insensitive search
+      query.name = regex;
+    }
+    const filteredChannels = await Channel.find(query);
+
+    res.status(200).json(filteredChannels);
+  } catch (error) {
+    console.log("Error in getChannels controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const createChannel = async (req: Request, res: Response) => {
   const { name, members } = req.body;
   try {
