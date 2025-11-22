@@ -20,7 +20,10 @@ export const getChannels = async (
       const regex = new RegExp(search.trim(), "i"); // case-insensitive search
       query.name = regex;
     }
-    const filteredChannels = await Channel.find(query);
+    const filteredChannels = await Channel.find(query).populate(
+      "members",
+      "fullName"
+    );
 
     res.status(200).json(filteredChannels);
   } catch (error) {
