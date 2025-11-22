@@ -21,13 +21,16 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     )}
     <div
       className={cn(
-        "max-w-[70%] rounded-lg p-3",
+        "max-w-[70%] rounded-lg px-3",
         !senderName
-          ? "bg-primary text-primary-foreground rounded-br-none"
+          ? "bg-primary text-primary-foreground rounded-br-none py-3"
           : "rounded-bl-none"
       )}
     >
-      <p className="text-sm">{message}</p>
+      <div>
+        <span className="text-sm text-foreground/30">{senderName}</span>
+        <p className="text-sm">{message}</p>
+      </div>
     </div>
   </div>
 );
