@@ -4,3 +4,13 @@ export interface Message {
   receiverId: string;
   text: string;
 }
+
+export interface ChannelMessage {
+  _id?: string;
+  senderId: {
+    _id: string;
+    fullName: string;
+  };
+  channelId: string;
+  text: string;
+}

@@ -1,8 +1,8 @@
 import React from "react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useChatStore } from "@/store/useChatStore";
 
 const tabs = [
   {
@@ -36,7 +36,7 @@ export const ChatSidebarTabs: React.FC<React.ComponentProps<"div">> = ({
   className,
   ...rest
 }) => {
-  const [activeTab, setActiveTab] = useState<string>("personal");
+  const { currentTab, setCurrentTab } = useChatStore();
 
   return (
     <div className={cn("flex rounded-lg border p-1", className)} {...rest}>
@@ -48,11 +48,11 @@ export const ChatSidebarTabs: React.FC<React.ComponentProps<"div">> = ({
             variant="ghost"
             className={cn(
               "h-9 flex-1 rounded-md text-sm font-medium",
-              activeTab === value
+              currentTab === value
                 ? "shadow-sm"
                 : "text-muted-foreground hover:bg-transparent"
             )}
-            onClick={() => setActiveTab(value)}
+            onClick={() => setCurrentTab(value as "personal" | "channels")}
           >
             <Icon className="mr-2 h-4 w-4" />
             {label}

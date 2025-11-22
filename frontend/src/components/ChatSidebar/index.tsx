@@ -10,9 +10,14 @@ import {
 import { NavUser } from "./components/NavUser";
 import { ChatSidebarTabs } from "./components/ChatSidebarTabs";
 import { ChatContactList } from "./components/ChatContactList";
+import { ChatChannelList } from "./components/ChatChannelList";
 import { SearchUsersField } from "../SearchUsersField";
+import { SearchChannelsField } from "../SearchChannelsField";
+import { useChatStore } from "@/store/useChatStore";
 
 const ChatSidebar: React.FC = () => {
+  const { currentTab } = useChatStore();
+
   return (
     <Sidebar>
       <SidebarHeader className="mb-2 flex flex-col items-left p-4">
@@ -20,8 +25,12 @@ const ChatSidebar: React.FC = () => {
       </SidebarHeader>
       <SidebarContent className="px-4">
         <ChatSidebarTabs className="mb-2" />
-        <SearchUsersField className="mb-6" />
-        <ChatContactList />
+        {currentTab === "personal" ? (
+          <SearchUsersField className="mb-6" />
+        ) : (
+          <SearchChannelsField />
+        )}
+        {currentTab === "personal" ? <ChatContactList /> : <ChatChannelList />}
       </SidebarContent>
       <SidebarFooter className="p-4">
         <NavUser />

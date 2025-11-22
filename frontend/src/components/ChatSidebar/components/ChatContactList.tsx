@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ChatContact } from "./ChatContact";
 import { useChatStore } from "@/store/useChatStore";
 import { useAuthStore } from "@/store/useAuthStore";
-import { ChatContactListSkeleton } from "./skeletons/ChatContactListSkeleton";
+import { ChatListSkeleton } from "./skeletons/ChatListSkeleton";
 
 const ChatContactList: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const ChatContactList: React.FC = () => {
     getUsers();
   }, [getUsers]);
 
-  if (isUsersLoading) return <ChatContactListSkeleton />;
+  if (isUsersLoading) return <ChatListSkeleton />;
 
   return (
     <div className="flex-1 space-y-2 overflow-y-auto">

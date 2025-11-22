@@ -2,18 +2,31 @@ import axios from "axios";
 import { create } from "zustand";
 import { toast } from "sonner";
 import type { User } from "@/types/user";
-import type { Message } from "@/types/message";
+import type { ChannelMessage, Message } from "@/types/message";
+import type { Channel } from "@/types/channel";
 
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "./useAuthStore";
 import { type createMessageSchemaValues } from "@backend-schemas/message.schema";
 
 interface ChatStore {
-  messages: Message[];
+  currentTab: "personal" | "channels";
+
   users: User[];
+  channels: Channel[];
+
+  messages: Message[];
   selectedUser: User | null;
+
+  channelMessages: ChannelMessage[];
+  selectedChannel: Channel | null;
+
   isUsersLoading: boolean;
   isMessagesLoading: boolean;
+  isChannelsLoading: boolean;
+  isChannelMessagesLoading: boolean;
+
+  setCurrentTab: (value: "personal" | "channels") => void;
 
   getUsers: (searchQuery?: string) => void;
   getMessages: (userId: string) => void;
@@ -21,61 +34,135 @@ interface ChatStore {
   setSelectedUser: (selectedUser: User | null) => void;
   subscribeToMessages: () => void;
   unsubscribeFromMessages: () => void;
+
+  getChannels: (searchQuery?: string) => void;
+  sendChannelMessage: (messageData: createMessageSchemaValues) => void;
+  setSelectedChannel: (selectedChannel: Channel | null) => void;
 }
 
 /**
  * Global chat store powered by Zustand.
  *
  * This store centralizes all chat-related state and actions
- * used across the application.
+ * used across the application. It manages both personal chats
+ * and channel-based messaging.
  *
  * ## State
- * - `messages` — Array of messages for the currently selected user.
- * - `users` — List of all users in the chat system.
- * - `selectedUser` — Currently selected user or `null` if none is selected.
- * - `isUsersLoading` — Indicates whether the users list is being fetched.
- * - `isMessagesLoading` — Indicates whether messages for the selected user are being fetched.
+ * - `currentTab` — Controls whether the user is viewing personal chats or channels.
+ *
+ * ### Personal chat state
+ * - `users` — List of users available for private messaging.
+ * - `messages` — Messages for the currently selected user.
+ * - `selectedUser` — The active user in a personal chat, or `null`.
+ *
+ * ### Channel chat state
+ * - `channels` — List of all available channels.
+ * - `channelMessages` — Messages for the currently selected channel.
+ * - `selectedChannel` — The active channel, or `null`.
+ *
+ * ### Loading states
+ * - `isUsersLoading` — Indicates whether users are currently being fetched.
+ * - `isMessagesLoading` — Indicates whether private messages are being fetched.
+ * - `isChannelsLoading` — Indicates whether channels are being fetched.
+ * - `isChannelMessagesLoading` — Indicates whether channel messages are being fetched.
  *
  * ## Actions
  *
- * ### getUsers(searchQuery)
- * Fetches users whose fullName matches searchQuery.
- * Otherwise fetches all users from the backend API and updates `users`.
- * Sets `isUsersLoading` to `true` while fetching and `false` when done.
- * Shows an error toast if the request fails.
+ * ### setCurrentTab(value)
+ * Switches between the "personal" and "channels" views.
  *
  * **Parameters:**
- * - `searchQuery` — the search query (optional).
+ * - `value` — `"personal"` or `"channels"`.
+ *
+ * ---
+ *
+ * ### getUsers(searchQuery?)
+ * Fetches all users, or filters by `fullName` using an optional search query.
+ * Updates `users` and handles loading & error states.
+ *
+ * **Parameters:**
+ * - `searchQuery` — optional string for filtering users.
+ *
+ * ---
  *
  * ### getMessages(userId)
- * Fetches messages for a specific user from the backend API and updates `messages`.
- * Sets `isMessagesLoading` to `true` while fetching and `false` when done.
- * Shows an error toast if the request fails.
- *
- * ### setSelectedUser(user)
- * Adds new `Message` to the database with given data.
+ * Fetches all messages exchanged with the given user.
+ * Updates `messages`.
  *
  * **Parameters:**
- * - `messageData` — the data with message text, senderId, and receiverId.
+ * - `userId` — ID of the user whose messages should be fetched.
  *
- * ### setSelectedUser(user)
- * Updates `selectedUser` with given user.
+ * ---
+ *
+ * ### sendMessage(messageData)
+ * Sends a personal message to the currently selected user.
  *
  * **Parameters:**
- * - `userId` — The ID of the user whose messages should be fetched.
+ * - `messageData` — message payload (text, senderId, receiverId, etc.).
+ *
+ * ---
+ *
+ * ### setSelectedUser(user)
+ * Selects a user for personal messaging.
+ *
+ * **Parameters:**
+ * - `user` — `User` object or `null`.
+ *
+ * ---
  *
  * ### subscribeToMessages()
- * Start listening to `newMessage` event using WebSockets and dynamically updates
- * the messages list with new messages.
+ * Subscribes to the `newMessage` WebSocket event.
+ * Updates the message list dynamically when new messages arrive.
+ *
+ * ---
  *
  * ### unsubscribeFromMessages()
- * Removes listener to `newMessage` event created by subscribeToMessages() function.
+ * Removes the WebSocket event listener created by `subscribeToMessages()`.
+ *
+ * ---
+ *
+ * ### getChannels(searchQuery?)
+ * Fetches channels from the backend or filters them by name.
+ *
+ * **Parameters:**
+ * - `searchQuery` — optional text used to filter channel names.
+ *
+ * ---
+ *
+ * ### getChannelMessages(channelId)
+ * Fetches all messages for a given channel.
+ * Updates `channelMessages`.
+ *
+ * **Parameters:**
+ * - `channelId` — ID of the channel whose messages should be fetched.
+ *
+ * ---
+ *
+ * ### sendChannelMessage(messageData)
+ * Sends a new message to the selected channel.
+ *
+ * **Parameters:**
+ * - `messageData` — channel message payload.
+ *
+ * ---
+ *
+ * ### setSelectedChannel(channel)
+ * Selects a channel for viewing or messaging.
+ *
+ * **Parameters:**
+ * - `channel` — `Channel` object or `null`.
+ *
  *
  * ## Usage
- * Use this hook anywhere in the application to access chat state:
  *
  * ```tsx
- * const { users, messages, getUsers, getMessages, isUsersLoading } = useChatStore();
+ * const {
+ *   users,
+ *   messages,
+ *   getUsers,
+ *   getMessages,
+ *   isUsersLoading
+ * } = useChatStore();
  *
  * useEffect(() => {
  *   getUsers();
@@ -87,11 +174,23 @@ interface ChatStore {
  * ```
  */
 export const useChatStore = create<ChatStore>((set, get) => ({
-  messages: [],
+  currentTab: "personal",
+
   users: [],
+  channels: [],
+
+  messages: [],
   selectedUser: null,
+
+  channelMessages: [],
+  selectedChannel: null,
+
   isUsersLoading: false,
   isMessagesLoading: false,
+  isChannelsLoading: false,
+  isChannelMessagesLoading: false,
+
+  setCurrentTab: (value: "personal" | "channels") => set({ currentTab: value }),
 
   getUsers: async (searchQuery?: string) => {
     set({ isUsersLoading: true });
@@ -168,4 +267,62 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   },
 
   setSelectedUser: (selectedUser: User | null) => set({ selectedUser }),
+
+  getChannels: async (searchQuery?: string) => {
+    set({ isChannelsLoading: true });
+    try {
+      const res = await axiosInstance.get(
+        `/channels?search=${searchQuery ?? ""}`
+      );
+      set({ channels: res.data });
+    } catch (error) {
+      console.log("Error in getChannels: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isChannelsLoading: false });
+    }
+  },
+
+  getChannelMessages: async (channelId: string) => {
+    set({ isChannelMessagesLoading: true });
+    try {
+      const res = await axiosInstance.get(`/messages/${channelId}`);
+      set({ channelMessages: res.data });
+    } catch (error) {
+      console.log("Error in getChannelMessages: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isChannelMessagesLoading: false });
+    }
+  },
+
+  sendChannelMessage: async (messageData: createMessageSchemaValues) => {
+    const { selectedChannel, channelMessages } = get();
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/channel/${selectedChannel?._id}`,
+        messageData
+      );
+      set({ messages: [...channelMessages, res.data] });
+    } catch (error) {
+      console.log("Error in sendChannelMessage: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    }
+  },
+
+  setSelectedChannel: (selectedChannel: Channel | null) => {
+    set({ selectedChannel });
+  },
 }));
