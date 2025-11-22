@@ -8,6 +8,7 @@ import type { Channel } from "@/types/channel";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "./useAuthStore";
 import { type createMessageSchemaValues } from "@backend-schemas/message.schema";
+import type { createChannelSchemaValues } from "@backend-schemas/channel.schema";
 
 interface ChatStore {
   currentTab: "personal" | "channels";
@@ -25,6 +26,7 @@ interface ChatStore {
   isMessagesLoading: boolean;
   isChannelsLoading: boolean;
   isChannelMessagesLoading: boolean;
+  isChannelCreating: boolean;
 
   setCurrentTab: (value: "personal" | "channels") => void;
 
@@ -37,6 +39,7 @@ interface ChatStore {
 
   getChannels: (searchQuery?: string) => void;
   sendChannelMessage: (messageData: createMessageSchemaValues) => void;
+  createChannel: (data: createChannelSchemaValues) => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
 }
 
@@ -146,6 +149,14 @@ interface ChatStore {
  *
  * ---
  *
+ * ### createChannel(data)
+ * Creates a new channel in the backend and updates the local channels list.
+ *
+ * **Parameters:**
+ * - `data` — object containing the channel creation payload
+ *
+ * ---
+ *
  * ### setSelectedChannel(channel)
  * Selects a channel for viewing or messaging.
  *
@@ -189,6 +200,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isMessagesLoading: false,
   isChannelsLoading: false,
   isChannelMessagesLoading: false,
+  isChannelCreating: false,
 
   setCurrentTab: (value: "personal" | "channels") => set({ currentTab: value }),
 
@@ -319,6 +331,24 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       } else {
         toast.error("Unexpected error");
       }
+    }
+  },
+
+  createChannel: async (data: createChannelSchemaValues) => {
+    set({ isChannelCreating: true });
+    try {
+      const res = await axiosInstance.post(`/channels/create`, data);
+      set({ channels: [...get().channels, res.data] });
+      toast.success("Channel created");
+    } catch (error) {
+      console.log("Error in createChannel: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isChannelCreating: false });
     }
   },
 

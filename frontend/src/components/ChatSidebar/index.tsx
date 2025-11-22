@@ -1,11 +1,14 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
 
 import { NavUser } from "./components/NavUser";
 import { ChatSidebarTabs } from "./components/ChatSidebarTabs";
@@ -33,6 +36,11 @@ const ChatSidebar: React.FC = () => {
         {currentTab === "personal" ? <ChatContactList /> : <ChatChannelList />}
       </SidebarContent>
       <SidebarFooter className="p-4">
+        {currentTab === "channels" && (
+          <Button asChild>
+            <Link to="/create-channel">Create new channel</Link>
+          </Button>
+        )}
         <NavUser />
       </SidebarFooter>
     </Sidebar>
