@@ -6,6 +6,7 @@ import {
   updateChannelInfo,
   addChannelMembers,
   deleteChannelMember,
+  deleteChannel,
 } from "../controllers/channel.controller";
 import { validateBody } from "../middleware/validateBody.middleware";
 import {
@@ -30,5 +31,6 @@ router.post(
 router.patch("/:id", validateBody(channelInfoSchema), updateChannelInfo);
 
 router.delete("/:id/members/:memberId", deleteChannelMember);
+router.delete("/:id", deleteChannel);
 
 export default router;

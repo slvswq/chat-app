@@ -133,6 +133,24 @@ export const deleteChannelMember = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteChannel = async (req: Request, res: Response) => {
+  try {
+    const channelId = getChannelId(req, res);
+    if (!channelId) return;
+
+    const channel = await Channel.findByIdAndDelete(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: "Channel not found" });
+    }
+
+    // Send message with 204 (No content)
+    return res.sendStatus(204);
+  } catch (error) {
+    console.log("Error in deleteChannel controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 /**
  * Extracts and validates the `channelId` parameter from the request.
  *
