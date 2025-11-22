@@ -65,3 +65,69 @@ export const sendMessage = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const getChannelMessages = async (req: Request, res: Response) => {
+  try {
+    const { id: channelId } = req.params;
+
+    if (!channelId || !mongoose.Types.ObjectId.isValid(channelId)) {
+      return res.status(400).json({ message: "Invalid channel ID" });
+    }
+
+    // Get all messages from the channel and fetch senders' names
+    const messages = await Message.find({ channelId })
+      .populate("senderId", "fullName")
+      .lean();
+
+    const formattedMessages = messages.map((msg) => ({
+      ...msg,
+      sender: msg.senderId, // rename key
+      senderId: undefined, // remove old key
+    }));
+
+    // Send message with 200 (OK) status code and messages
+    return res.status(200).json(formattedMessages);
+  } catch (error) {
+    console.log("Error in getChannelMessages controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const sendChannelMessage = async (req: Request, res: Response) => {
+  const { text } = req.body;
+  try {
+    const { id: channelId } = req.params;
+    const myId = req.user._id;
+
+    if (!channelId || !mongoose.Types.ObjectId.isValid(channelId)) {
+      return res.status(400).json({ message: "Invalid channel ID" });
+    }
+
+    const newMessage = await Message.create({
+      senderId: myId,
+      channelId,
+      text,
+    });
+
+    // Populate senderId to get fullName
+    await newMessage.populate("senderId", "fullName");
+
+    // Optional: rename key for clarity
+    const formattedMessage = {
+      ...newMessage.toObject(),
+      sender: newMessage.senderId,
+      senderId: undefined,
+    };
+
+    // Broadcast to all users in the channel (implement later)
+    // const channelSocketIds = getChannelSocketIds(channelId);
+    // channelSocketIds.forEach((socketId) => {
+    //   getIo().to(socketId).emit("newMessage", newMessage);
+    // });
+
+    res.status(201).json(formattedMessage);
+  } catch (error) {
+    console.error("Error in sendChannelMessage controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
