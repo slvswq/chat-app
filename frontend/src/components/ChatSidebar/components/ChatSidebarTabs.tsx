@@ -1,4 +1,6 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,6 +38,7 @@ export const ChatSidebarTabs: React.FC<React.ComponentProps<"div">> = ({
   className,
   ...rest
 }) => {
+  const navigate = useNavigate();
   const { currentTab, setCurrentTab } = useChatStore();
 
   return (
@@ -52,7 +55,10 @@ export const ChatSidebarTabs: React.FC<React.ComponentProps<"div">> = ({
                 ? "shadow-sm"
                 : "text-muted-foreground hover:bg-transparent"
             )}
-            onClick={() => setCurrentTab(value as "personal" | "channels")}
+            onClick={() => {
+              navigate("/");
+              setCurrentTab(value as "personal" | "channels");
+            }}
           >
             <Icon className="mr-2 h-4 w-4" />
             {label}
