@@ -8,7 +8,7 @@ import type { Channel } from "@/types/channel";
 import { axiosInstance } from "@/lib/axios";
 import { useAuthStore } from "./useAuthStore";
 import { type createMessageSchemaValues } from "@backend-schemas/message.schema";
-import type { createChannelSchemaValues } from "@backend-schemas/channel.schema";
+import type { channelSchemaValues } from "@backend-schemas/channel.schema";
 
 interface ChatStore {
   currentTab: "personal" | "channels";
@@ -39,7 +39,7 @@ interface ChatStore {
 
   getChannels: (searchQuery?: string) => void;
   sendChannelMessage: (messageData: createMessageSchemaValues) => void;
-  createChannel: (data: createChannelSchemaValues) => void;
+  createChannel: (data: channelSchemaValues) => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
 }
 
@@ -334,7 +334,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
   },
 
-  createChannel: async (data: createChannelSchemaValues) => {
+  createChannel: async (data: channelSchemaValues) => {
     set({ isChannelCreating: true });
     try {
       const res = await axiosInstance.post(`/channels/create`, data);

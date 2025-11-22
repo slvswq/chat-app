@@ -19,8 +19,8 @@ import { FormField } from "./FormField";
 import { UserSelectionList } from "./UserSelectionList";
 import { SubmitButton } from "./SubmitButton";
 import {
-  createChannelSchema,
-  type createChannelSchemaValues,
+  channelSchema,
+  type channelSchemaValues,
 } from "@backend-schemas/channel.schema";
 import { getInitials } from "@/utils/stringUtils";
 
@@ -48,8 +48,8 @@ function CreateChannelForm({
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<createChannelSchemaValues>({
-    resolver: zodResolver(createChannelSchema),
+  } = useForm<channelSchemaValues>({
+    resolver: zodResolver(channelSchema),
     defaultValues: {
       name: "My Channel",
       members: [],
@@ -58,7 +58,7 @@ function CreateChannelForm({
 
   const name = watch("name");
 
-  const onSubmit = (data: createChannelSchemaValues) => {
+  const onSubmit = (data: channelSchemaValues) => {
     createChannel(data);
   };
 

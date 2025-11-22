@@ -35,7 +35,7 @@ export const getChannels = async (
 export const createChannel = async (req: Request, res: Response) => {
   const { name, members } = req.body;
   try {
-    const creatorId = req.user._id;
+    const myId = req.user._id;
 
     const isMemberListValid = await checkMembers(res, members);
     if (!isMemberListValid) return;
@@ -43,8 +43,8 @@ export const createChannel = async (req: Request, res: Response) => {
     // Create new Channel in the DB
     const newChannel = await Channel.create({
       name,
-      creator: creatorId,
-      members: [creatorId, ...(members || [])],
+      creator: myId,
+      members: [myId, ...(members || [])],
     });
     if (!newChannel) {
       return res.status(400).json({ message: "Invalid channel data" });
@@ -59,40 +59,8 @@ export const createChannel = async (req: Request, res: Response) => {
   }
 };
 
-export const updateChannelInfo = async (req: Request, res: Response) => {
-  const { name } = req.body;
-  try {
-    const myId = req.user._id;
-
-    const channelId = getChannelId(req, res);
-    if (!channelId) return;
-
-    // Update the user entry in the DB
-    const channel = await Channel.findById(channelId);
-    if (!channel) {
-      return res.status(404).json({ message: "Channel not found" });
-    }
-
-    // Check if the user is the channel creator
-    if (channel.creator.toString() !== myId.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Only the channel creator can perform this action" });
-    }
-
-    channel.name = name;
-    await channel.save();
-
-    // Send message with 200 (OK) status code and updated channel data
-    return res.status(200).json(channel);
-  } catch (error) {
-    console.log("Error in updateChannelInfo controller: ", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const addChannelMembers = async (req: Request, res: Response) => {
-  const { members } = req.body;
+export const updateChannel = async (req: Request, res: Response) => {
+  const { name, members } = req.body;
   try {
     const myId = req.user._id;
 
@@ -102,9 +70,10 @@ export const addChannelMembers = async (req: Request, res: Response) => {
     const isMemberListValid = await checkMembers(res, members);
     if (!isMemberListValid) return;
 
+    // Create new Channel in the DB
     const channel = await Channel.findById(channelId);
     if (!channel) {
-      return res.status(404).json({ message: "Channel not found" });
+      return res.status(400).json({ message: "Invalid channel data" });
     }
 
     // Check if the user is the channel creator
@@ -114,48 +83,15 @@ export const addChannelMembers = async (req: Request, res: Response) => {
         .json({ message: "Only the channel creator can perform this action" });
     }
 
-    // Add new member IDs to the list of members
-    const currentMembers = channel.members.map((id) => id.toString());
-    channel.members = [...new Set([...currentMembers, ...members])];
+    // Update channel data
+    channel.name = name;
+    channel.members = [...new Set([myId.toString(), ...members])];
     await channel.save();
 
-    // Send message with 200 (OK) status code and updated channel data
-    return res.status(200).json(channel);
+    // Send updated channel data with 200 (OK) status code
+    res.status(201).json(channel);
   } catch (error) {
-    console.log("Error in addChannelMembers controller: ", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const deleteChannelMember = async (req: Request, res: Response) => {
-  const { memberId } = req.params;
-  try {
-    const myId = req.user._id;
-
-    const channelId = getChannelId(req, res);
-    if (!channelId) return;
-
-    const channel = await Channel.findById(channelId);
-    if (!channel) {
-      return res.status(404).json({ message: "Channel not found" });
-    }
-
-    // Check if the user is the channel creator
-    if (channel.creator.toString() !== myId.toString()) {
-      return res
-        .status(403)
-        .json({ message: "Only the channel creator can perform this action" });
-    }
-
-    // Remove given memberId from the list of members
-    const currentMembers = channel.members.map((id) => id.toString());
-    channel.members = currentMembers.filter((id) => id !== memberId) as any[];
-    await channel.save();
-
-    // Send message with 200 (OK) status code and updated channel data
-    return res.status(200).json(channel);
-  } catch (error) {
-    console.log("Error in deleteChannelMember controller: ", error);
+    console.log("Error in createChannel controller: ", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -167,7 +103,7 @@ export const deleteChannel = async (req: Request, res: Response) => {
     const channelId = getChannelId(req, res);
     if (!channelId) return;
 
-    const channel = await Channel.findByIdAndDelete(channelId);
+    const channel = await Channel.findById(channelId);
     if (!channel) {
       return res.status(404).json({ message: "Channel not found" });
     }
@@ -179,7 +115,10 @@ export const deleteChannel = async (req: Request, res: Response) => {
         .json({ message: "Only the channel creator can perform this action" });
     }
 
-    // Send message with 204 (No content)
+    // Delete channel
+    await channel.deleteOne();
+
+    // Send 204 (No content) status code
     return res.sendStatus(204);
   } catch (error) {
     console.log("Error in deleteChannel controller: ", error);
