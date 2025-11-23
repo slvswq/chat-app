@@ -369,11 +369,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   updateChannel: async (data: channelSchemaValues) => {
     set({ isChannelUpdating: true });
     try {
-      const res = await axiosInstance.put(
-        `/channels/${get().selectedChannel?._id}`,
-        data
-      );
-      set({ channels: [...get().channels, res.data] });
+      await axiosInstance.put(`/channels/${get().selectedChannel?._id}`, data);
       toast.success("Channel updated");
     } catch (error) {
       console.log("Error in updateChannel: ", error);
