@@ -45,6 +45,8 @@ interface ChatStore {
   updateChannel: (data: channelSchemaValues) => void;
   deleteChannel: () => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
+  subscribeToChannelMessages: () => void;
+  unsubscribeFromChannelMessages: () => void;
 }
 
 /**
@@ -402,6 +404,30 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         toast.error("Unexpected error");
       }
     }
+  },
+
+  subscribeToChannelMessages: async () => {
+    const { selectedChannel } = get();
+    if (!selectedChannel) return;
+
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+
+    socket.on("newChannelMessage", (newMessage: ChannelMessage) => {
+      const isSentFromSelectedChannel =
+        newMessage.channelId === selectedChannel._id;
+
+      if (!isSentFromSelectedChannel) return;
+
+      set({ channelMessages: [...get().channelMessages, newMessage] });
+    });
+  },
+
+  unsubscribeFromChannelMessages: async () => {
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+
+    socket.off("newChannelMessage");
   },
 
   setSelectedChannel: (selectedChannel: Channel | null) => {

@@ -12,11 +12,21 @@ const ChannelMessageList: React.FC = () => {
     getChannelMessages,
     isChannelMessagesLoading,
     selectedChannel,
+    subscribeToChannelMessages,
+    unsubscribeFromChannelMessages,
   } = useChatStore();
 
   useEffect(() => {
     if (selectedChannel?._id) getChannelMessages(selectedChannel?._id);
-  }, [selectedChannel?._id, getChannelMessages]);
+
+    subscribeToChannelMessages();
+    return () => unsubscribeFromChannelMessages();
+  }, [
+    selectedChannel?._id,
+    getChannelMessages,
+    subscribeToChannelMessages,
+    unsubscribeFromChannelMessages,
+  ]);
 
   if (isChannelMessagesLoading) return <MessageListSkeleton />;
 

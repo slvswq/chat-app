@@ -147,11 +147,14 @@ export const sendChannelMessage = async (req: Request, res: Response) => {
       senderId: undefined,
     };
 
-    // Broadcast to all users in the channel (implement later)
-    // const channelSocketIds = getChannelSocketIds(channelId);
-    // channelSocketIds.forEach((socketId) => {
-    //   getIo().to(socketId).emit("newMessage", newMessage);
-    // });
+    // Broadcast to all members of the channel
+    const channelSocketIds = channel.members.map((memberId) =>
+      getReceiverSocketId(memberId.toString())
+    );
+    channelSocketIds.forEach((socketId) => {
+      if (socketId)
+        getIo().to(socketId).emit("newChannelMessage", formattedMessage);
+    });
 
     res.status(201).json(formattedMessage);
   } catch (error) {
