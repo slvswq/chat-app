@@ -39,7 +39,7 @@ const ChatHeader: React.FC = () => {
       )}
       {currentTab === "channels" && selectedChannel && (
         <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <Avatar className="size-10">
               <AvatarFallback>
                 {getInitials(selectedChannel.name || "")}
@@ -52,7 +52,7 @@ const ChatHeader: React.FC = () => {
                 {selectedChannel.members.length > 1 ? "members" : "member"}
               </p>
             </div>
-          </div>
+          </Link>
           {selectedChannel.creator === authUser?._id && (
             <Button variant="link" asChild>
               <Link to="edit-channel">

@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreateChannelPage from "./pages/CreateChannelPage";
+import EditChannelPage from "./pages/EditChannelPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { Toaster } from "sonner";
 
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/create-channel" element={<CreateChannelPage />} />
+            <Route path="/edit-channel" element={<EditChannelPage />} />
           </Route>
         </Route>
       </Routes>

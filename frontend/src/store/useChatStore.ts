@@ -27,6 +27,7 @@ interface ChatStore {
   isChannelsLoading: boolean;
   isChannelMessagesLoading: boolean;
   isChannelCreating: boolean;
+  isChannelUpdating: boolean;
 
   setCurrentTab: (value: "personal" | "channels") => void;
 
@@ -41,6 +42,7 @@ interface ChatStore {
   getChannelMessages: (channelId: string) => void;
   sendChannelMessage: (messageData: createMessageSchemaValues) => void;
   createChannel: (data: channelSchemaValues) => void;
+  updateChannel: (data: channelSchemaValues) => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
 }
 
@@ -69,6 +71,8 @@ interface ChatStore {
  * - `isMessagesLoading` — Indicates whether private messages are being fetched.
  * - `isChannelsLoading` — Indicates whether channels are being fetched.
  * - `isChannelMessagesLoading` — Indicates whether channel messages are being fetched.
+ * - `isChannelCreating` - Indicates whether channel is creating.
+ * - `isChannelUpdating` - Indicates whether channel is updating.
  *
  * ## Actions
  *
@@ -202,6 +206,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isChannelsLoading: false,
   isChannelMessagesLoading: false,
   isChannelCreating: false,
+  isChannelUpdating: false,
 
   setCurrentTab: (value: "personal" | "channels") => set({ currentTab: value }),
 
@@ -350,6 +355,27 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }
     } finally {
       set({ isChannelCreating: false });
+    }
+  },
+
+  updateChannel: async (data: channelSchemaValues) => {
+    set({ isChannelUpdating: true });
+    try {
+      const res = await axiosInstance.put(
+        `/channels/${get().selectedChannel?._id}`,
+        data
+      );
+      set({ channels: [...get().channels, res.data] });
+      toast.success("Channel updated");
+    } catch (error) {
+      console.log("Error in updateChannel: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
+    } finally {
+      set({ isChannelUpdating: false });
     }
   },
 
