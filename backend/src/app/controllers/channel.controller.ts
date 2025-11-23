@@ -51,6 +51,9 @@ export const createChannel = async (req: Request, res: Response) => {
     }
     await newChannel.save();
 
+    // Populate members list
+    await newChannel.populate("members", "fullName");
+
     // Send channel data with 201 (Created) status code
     res.status(201).json(newChannel);
   } catch (error) {
