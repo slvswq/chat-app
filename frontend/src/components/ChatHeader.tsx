@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Pencil } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -8,7 +7,7 @@ import { getInitials } from "@/utils/stringUtils";
 import { useChatStore } from "@/store/useChatStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { SidebarTrigger } from "./ui/sidebar";
-import { Button } from "./ui/button";
+import { DropdownChannelMenu } from "./DropdownChannelMenu";
 
 const ChatHeader: React.FC = () => {
   const { currentTab, selectedUser, selectedChannel } = useChatStore();
@@ -55,14 +54,7 @@ const ChatHeader: React.FC = () => {
               </p>
             </div>
           </Link>
-          {selectedChannel.creator === authUser?._id && (
-            <Button variant="link" asChild>
-              <Link to="edit-channel">
-                <Pencil />
-                Edit channel
-              </Link>
-            </Button>
-          )}
+          {selectedChannel.creator === authUser?._id && <DropdownChannelMenu />}
         </div>
       )}
     </div>

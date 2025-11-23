@@ -43,6 +43,7 @@ interface ChatStore {
   sendChannelMessage: (messageData: createMessageSchemaValues) => void;
   createChannel: (data: channelSchemaValues) => void;
   updateChannel: (data: channelSchemaValues) => void;
+  deleteChannel: () => void;
   setSelectedChannel: (selectedChannel: Channel | null) => void;
 }
 
@@ -159,6 +160,11 @@ interface ChatStore {
  *
  * **Parameters:**
  * - `data` — object containing the channel creation payload
+ *
+ * ---
+ *
+ * ### deleteChannel()
+ * Deletes selected channel in the backend and clears the selectedChannel variable.
  *
  * ---
  *
@@ -376,6 +382,25 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }
     } finally {
       set({ isChannelUpdating: false });
+    }
+  },
+
+  deleteChannel: async () => {
+    const channelId = get().selectedChannel?._id;
+    try {
+      await axiosInstance.delete(`/channels/${channelId}`);
+      set({
+        channels: get().channels.filter((channel) => channel._id !== channelId),
+        selectedChannel: null,
+      });
+      toast.success("Channel deleted");
+    } catch (error) {
+      console.log("Error in deleteChannel: ", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      } else {
+        toast.error("Unexpected error");
+      }
     }
   },
 
