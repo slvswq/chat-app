@@ -14,7 +14,7 @@ import {
 } from "@backend-schemas/message.schema";
 
 const MessageInput: React.FC = () => {
-  const { sendMessage } = useChatStore();
+  const { currentTab, sendMessage, sendChannelMessage } = useChatStore();
   const { register, handleSubmit, reset } = useForm<createMessageSchemaValues>({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {
@@ -23,7 +23,9 @@ const MessageInput: React.FC = () => {
   });
 
   const onSubmit = (data: createMessageSchemaValues) => {
-    sendMessage(data);
+    if (currentTab === "personal") sendMessage(data);
+    else if (currentTab === "channels") sendChannelMessage(data);
+
     reset();
   };
 

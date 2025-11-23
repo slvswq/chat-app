@@ -329,7 +329,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         `/messages/send/channel/${selectedChannel?._id}`,
         messageData
       );
-      set({ messages: [...channelMessages, res.data] });
+      set({ channelMessages: [...channelMessages, res.data] });
     } catch (error) {
       console.log("Error in sendChannelMessage: ", error);
       if (axios.isAxiosError(error)) {
