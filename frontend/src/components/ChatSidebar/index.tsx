@@ -29,9 +29,9 @@ const ChatSidebar: React.FC = () => {
       <SidebarContent className="px-4">
         <ChatSidebarTabs className="mb-2" />
         {currentTab === "personal" ? (
-          <SearchUsersField className="mb-6" />
+          <SearchUsersField className="mb-2" />
         ) : (
-          <SearchChannelsField />
+          <SearchChannelsField className="mb-2" />
         )}
         {currentTab === "personal" ? <ChatContactList /> : <ChatChannelList />}
       </SidebarContent>
