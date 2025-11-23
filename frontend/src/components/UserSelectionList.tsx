@@ -45,7 +45,7 @@ export function UserSelectionList({
       <FieldLabel className="font-medium mb-3">Select Members</FieldLabel>
       <SearchUsersField className="rounded-b-none" />
 
-      <div className="flex flex-col border border-t-0 rounded-b-md p-4 h-40 overflow-y-auto">
+      <div className="flex flex-col border border-t-0 rounded-b-md p-4 h-30 overflow-y-auto">
         {isUsersLoading ? (
           <Spinner className="m-auto size-7" />
         ) : (

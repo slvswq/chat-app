@@ -73,8 +73,6 @@ function EditChannelForm({ className, ...rest }: React.ComponentProps<"div">) {
           <CardTitle className="text-xl">Edit Channel</CardTitle>
           <CardDescription>
             Update the channel’s details, including its name and members.
-            Editing a channel helps keep conversations organized and ensures the
-            right people have access.
           </CardDescription>
         </CardHeader>
         <CardContent>
