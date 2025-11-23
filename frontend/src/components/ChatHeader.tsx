@@ -40,13 +40,15 @@ const ChatHeader: React.FC = () => {
       {currentTab === "channels" && selectedChannel && (
         <div className="flex items-center justify-between w-full">
           <Link to="/" className="flex items-center gap-3">
-            <Avatar className="size-10">
+            <Avatar className="size-10 hidden sm:block">
               <AvatarFallback>
                 {getInitials(selectedChannel.name || "")}
               </AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="font-semibold">{selectedChannel?.name}</h2>
+              <h2 className="font-semibold truncate max-w-35 sm:max-w-60 md:max-w-100">
+                {selectedChannel?.name}
+              </h2>
               <p className={cn("text-muted-foreground text-sm")}>
                 {selectedChannel.members.length}{" "}
                 {selectedChannel.members.length > 1 ? "members" : "member"}

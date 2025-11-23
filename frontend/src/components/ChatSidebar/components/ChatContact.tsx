@@ -51,7 +51,7 @@ const ChatContact: React.FC<ChatContactProps> = ({
     </Avatar>
     <div className="flex-1">
       <div className="flex items-center justify-between">
-        <span className="truncate font-medium max-w-50">{fullName}</span>
+        <span className="truncate font-medium max-w-45">{fullName}</span>
       </div>
       <p
         className={cn(
