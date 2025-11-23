@@ -1,8 +1,7 @@
 import type React from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { getInitials } from "@/utils/stringUtils";
+import { ChatAvatar } from "@/components/ChatAvatar";
 
 interface ChatChannelProps {
   name: string;
@@ -46,9 +45,7 @@ const ChatChannel: React.FC<ChatChannelProps> = ({
     )}
     onClick={() => onClick()}
   >
-    <Avatar className="size-10">
-      <AvatarFallback>{getInitials(name)}</AvatarFallback>
-    </Avatar>
+    <ChatAvatar className="size-10" name={name} />
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <span className="truncate font-medium max-w-45">{name}</span>

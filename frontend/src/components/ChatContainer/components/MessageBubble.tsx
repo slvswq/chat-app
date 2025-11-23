@@ -1,6 +1,5 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ChatAvatar } from "@/components/ChatAvatar";
 import { cn } from "@/lib/utils";
-import { getInitials } from "@/utils/stringUtils";
 
 interface MessageBubbleProps {
   senderName?: string;
@@ -14,11 +13,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   <div
     className={cn("flex items-start gap-3", !senderName ? "justify-end" : "")}
   >
-    {senderName && (
-      <Avatar className="h-8 w-8">
-        <AvatarFallback>{getInitials(senderName)}</AvatarFallback>
-      </Avatar>
-    )}
+    {senderName && <ChatAvatar className="size-8" name={senderName} />}
     <div
       className={cn(
         "max-w-[70%] rounded-lg px-3",

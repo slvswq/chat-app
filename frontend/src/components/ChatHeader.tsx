@@ -2,12 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { getInitials } from "@/utils/stringUtils";
 import { useChatStore } from "@/store/useChatStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { SidebarTrigger } from "./ui/sidebar";
 import { DropdownChannelMenu } from "./DropdownChannelMenu";
+import { ChatAvatar } from "./ChatAvatar";
 
 const ChatHeader: React.FC = () => {
   const { currentTab, selectedUser, selectedChannel } = useChatStore();
@@ -18,11 +17,7 @@ const ChatHeader: React.FC = () => {
       <SidebarTrigger className="md:hidden" />
       {currentTab === "personal" && selectedUser && (
         <div className="flex items-center gap-3">
-          <Avatar className="size-10">
-            <AvatarFallback>
-              {getInitials(selectedUser.fullName || "")}
-            </AvatarFallback>
-          </Avatar>
+          <ChatAvatar className="size-10" name={selectedUser?.fullName} />
           <div>
             <h2 className="font-semibold">{selectedUser?.fullName}</h2>
             <p
@@ -39,11 +34,10 @@ const ChatHeader: React.FC = () => {
       {currentTab === "channels" && selectedChannel && (
         <div className="flex items-center justify-between w-full">
           <Link to="/" className="flex items-center gap-3">
-            <Avatar className="size-10 hidden sm:block">
-              <AvatarFallback>
-                {getInitials(selectedChannel.name || "")}
-              </AvatarFallback>
-            </Avatar>
+            <ChatAvatar
+              className="size-10 hidden sm:block"
+              name={selectedChannel.name}
+            />
             <div>
               <h2 className="font-semibold truncate max-w-35 sm:max-w-60 md:max-w-100">
                 {selectedChannel?.name}

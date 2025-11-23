@@ -1,11 +1,10 @@
 import React from "react";
 import { useChatStore } from "@/store/useChatStore";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { getInitials } from "@/utils/stringUtils";
 import { FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { SearchUsersField } from "./SearchUsersField";
 import { Spinner } from "./ui/spinner";
+import { ChatAvatar } from "./ChatAvatar";
 
 interface UserSelectionListProps {
   className?: string;
@@ -61,9 +60,7 @@ export function UserSelectionList({
                 onChange={() => toggleMember(user._id)}
               />
 
-              <Avatar className="size-8">
-                <AvatarFallback>{getInitials(user.fullName)}</AvatarFallback>
-              </Avatar>
+              <ChatAvatar className="size-8" name={user.fullName} />
 
               <span className="truncate">{user.fullName}</span>
             </FieldLabel>

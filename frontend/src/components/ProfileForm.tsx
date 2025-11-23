@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldGroup } from "@/components/ui/field";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { FormField } from "./FormField";
@@ -21,7 +20,7 @@ import {
   updateUserSchema,
   type updateUserSchemaValues,
 } from "@backend-schemas/user.schema";
-import { getInitials } from "@/utils/stringUtils";
+import { ChatAvatar } from "./ChatAvatar";
 
 const fields = [{ id: "fullName", type: "text", label: "Full Name" }] as const;
 
@@ -75,9 +74,10 @@ function ProfileForm({ className, ...rest }: React.ComponentProps<"div">) {
         </CardHeader>
         <CardContent>
           <div className="pb-6 border-b mb-6">
-            <Avatar className="mx-auto size-20 text-2xl font-semibold">
-              <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
-            </Avatar>
+            <ChatAvatar
+              className="mx-auto size-20 text-2xl font-semibold"
+              name={fullName}
+            />
           </div>
           <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
             <FieldGroup>

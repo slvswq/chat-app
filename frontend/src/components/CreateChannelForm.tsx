@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldGroup } from "@/components/ui/field";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { useChatStore } from "@/store/useChatStore";
 import { FormField } from "./FormField";
@@ -22,7 +21,7 @@ import {
   channelSchema,
   type channelSchemaValues,
 } from "@backend-schemas/channel.schema";
-import { getInitials } from "@/utils/stringUtils";
+import { ChatAvatar } from "./ChatAvatar";
 
 const fields = [{ id: "name", type: "text", label: "Channel Name" }] as const;
 
@@ -82,9 +81,10 @@ function CreateChannelForm({
         </CardHeader>
         <CardContent>
           <div className="pb-6 border-b mb-6">
-            <Avatar className="mx-auto size-20 text-2xl font-semibold">
-              <AvatarFallback>{getInitials(name)}</AvatarFallback>
-            </Avatar>
+            <ChatAvatar
+              className="mx-auto size-20 text-2xl font-semibold"
+              name={name}
+            />
           </div>
           <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
             <FieldGroup>

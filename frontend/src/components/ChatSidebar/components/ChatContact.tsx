@@ -1,8 +1,7 @@
 import type React from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { getInitials } from "@/utils/stringUtils";
+import { ChatAvatar } from "@/components/ChatAvatar";
 
 interface ChatContactProps {
   fullName: string;
@@ -46,9 +45,8 @@ const ChatContact: React.FC<ChatContactProps> = ({
     )}
     onClick={() => onClick()}
   >
-    <Avatar className="size-10">
-      <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
-    </Avatar>
+    <ChatAvatar className="size-10" name={fullName} />
+
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <span className="truncate font-medium max-w-45">{fullName}</span>
